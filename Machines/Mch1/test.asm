@@ -17,8 +17,6 @@ reset:
     PAG $SP_PAG.h
     CTA $BL_REG.l
     
-    
-    
     CHA $10
     CHB $10
     PAG $mul.h

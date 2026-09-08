@@ -112,7 +112,7 @@ export function LineAsm(line, context) {
         return a;
     }
     function getRegOf(name) {
-        return ({A:0,B:1,C:2,P:3,X:4,Y:5,Z:6,W:7,M:8})[name.toUpperCase()];
+        return ({A:0,B:1,C:2,P:3,X:4,Y:5,Z:6,W:7,M:8,K:15})[name.toUpperCase()];
     }
     function getFlagOf(name) {
         return ({C:0,D:6,})[name.toUpperCase()];
@@ -130,6 +130,9 @@ export function LineAsm(line, context) {
         }
         if (nam == 'ADC') {
             return [0x03, [0x0, 'r']];
+        }
+        if (nam == 'MUL') {
+            return [0x03, [0x6, 'r']];
         }
         if (nam == 'SHR') {
             return [0x03, [0x2, 'r']];
@@ -170,7 +173,7 @@ export function LineAsm(line, context) {
         if (nam.startsWith('ZR') && nam.length == 3) {
             return [0x02, 0x00 | getFlagOf(nam[2])];
         }
-        if (nam.startsWith('ST') && nam.length == 3) {
+        if (nam.startsWith('ST') && nam.length == 3 && (getFlagOf(nam[2]) !== undefined)) {
             return [0x02, 0x10 | getFlagOf(nam[2])];
         }
         if (nam == 'CHA') {
@@ -206,6 +209,10 @@ export function LineAsm(line, context) {
         return null;
     }
     function toBigEndianBytes(n, x) {
+        if (n == 0) {
+            return new Array(x).fill(0);
+        }
+
         let bytes = [];
         while (n > 0) {
             bytes.push(n & 0xFF);
@@ -268,19 +275,44 @@ export function LineAsm(line, context) {
         info.label = false;
         if (peek().value == '(') {
             consume();
-            let result = parseSyntx();
+            let infa = {};
+            let result = parseSyntx(infa);
+            if (infa.label) result += context.org;
+            let steps = [result];
             while (peek() && peek().value != ')') {
                 if (peek().value !== ')') {
                     let xc = consume().value;
-                    if (xc == '+') result = result + parseSyntx();
-                    else if (xc == '-') result = result - parseSyntx();
-                    else if (xc == '*') result = result * parseSyntx();
-                    else if (xc == '/') result = result / parseSyntx();
+                    steps.push(xc);
+                    if (xc == '+') {
+                        let fomi = {};
+                        let ra = parseSyntx(fomi);
+                        steps.push(ra);
+                        result = result + ra;
+                    }
+                    else if (xc == '-') {
+                        let fomi = {};
+                        let ra = parseSyntx(fomi);
+                        steps.push(ra);
+                        result = result - ra;
+                    }
+                    else if (xc == '*') {
+                        let fomi = {};
+                        let ra = parseSyntx(fomi);
+                        steps.push(ra);
+                        result = result * ra;
+                    }
+                    else if (xc == '/') {
+                        let fomi = {};
+                        let ra = parseSyntx(fomi);
+                        steps.push(ra);
+                        result = result / ra;
+                    }
                 }
             }
             consume();
             return result;
         }
+        if (peek().type == 'number') return consume().value;
         if (peek().value == '.') {
             consume();
             info.label = true;
@@ -320,8 +352,28 @@ export function LineAsm(line, context) {
             let pr = parseStructured(opr);
             result.push(...pr);
         }
+        else if (peek().value.toUpperCase() === 'STR') {
+            consume();
+            expect("$", 'expected number');
+            let inf = {};
+            let pk = parseSyntx(inf);
+            if (peek() && peek().value === ',') {
+                consume();
+                result.push(...parseStructured([0x06, 'n']));
+            }
+            if (inf.label) pk += context.org;
+            result.push(...LineAsm(`PAG $${(pk >> 8) & 0xFF} CTA $${pk & 0xFF}`, context));
+        }
+        else if (peek().value.toUpperCase() === 'LDS') {
+            consume();
+            expect("$", 'expected number');
+            let inf = {};
+            let pk = parseSyntx(inf);
+            if (inf.label) pk += context.org;
+            result.push(...LineAsm(`PAG $${(pk >> 8) & 0xFF} CDA $${pk & 0xFF}`, context));
+        }
         else if (peek().value == ';') return result;
-        else if (parseSize(peek().value) !== undefined) {
+        else if (parseSize(peek().value.toLowerCase()) !== undefined) {
             let sizeof = parseSize(consume().value);
             let primarys = toBigEndianBytes(parseSyntx(), sizeof);
             while (peek() && peek().value === ",") {
@@ -336,7 +388,7 @@ export function LineAsm(line, context) {
             consume();
             context.org = parseSyntx();
         }
-        else if (peek().value.toUpperCase() == 'RESERVE') {
+        else if (peek().value.toUpperCase() == 'RESERVE' || peek().value.toUpperCase() == 'RSV') {
             consume();
             let sx = parseSyntx();
             result.push(...(new Array(sx).fill(0)));
@@ -352,6 +404,9 @@ export function LineAsm(line, context) {
             if (peek().value.toUpperCase() == 'EQU') {
                 consume();
                 context.equals.set(ident, parseSyntx())
+            }
+            else if (parseSize(peek().value.toLowerCase()) !== undefined) {
+                context.symbs.set(ident, context.currentIp)
             }
             else {
                 expect(":");

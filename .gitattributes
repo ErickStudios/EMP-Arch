@@ -3,3 +3,4 @@
 *.js linguist-generated=true
 *.asm linguist-generated=true
 *.html linguist-generated=true
+*.py linguist-generated=true
