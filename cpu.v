@@ -195,7 +195,7 @@ always @(posedge clk or posedge rst) begin
                         ix <= 1'b1;
                     end
                     // 03 6r: MUL r (a = a * r)
-                    else if (ins[7:4] == 4'h6 & MODEL_TYPE >= 1028) begin
+                    else if (ins[7:4] == 4'h6 && MODEL_TYPE >= 1028) begin
                         ar <= ar * getReg(reg_r);
                         ix <= 1'b1;
                     end
