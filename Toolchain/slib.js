@@ -352,6 +352,14 @@ export function LineAsm(line, context) {
             let pr = parseStructured(opr);
             result.push(...pr);
         }
+        else if (peek().value.toUpperCase() === 'JIC') {
+            consume();
+            expect("$", 'expected number');
+            let inf = {};
+            let pk = parseSyntx(inf);
+            if (inf.label) pk += context.org;
+            result.push(...LineAsm(`PAG $${(pk >> 8) & 0xFF} BCC $${pk & 0xFF}`, context));
+        }
         else if (peek().value.toUpperCase() === 'STR') {
             consume();
             expect("$", 'expected number');

@@ -51,6 +51,12 @@
     ; TO SPLIT THE KEYBOARD FROM THE SCREEN
     KYBRD EQU 200H  ; 1BA00H KEYBOARD READ
 
+    ; VECTORS AT FIRMWARE DATA STARTS EACH VECTOR
+    ; HAS A LENGHT OF 4 BYTES (TWO INSTRUCTIONS)
+
+    JIC $VIDEO_TTY  ; C000H :: tty write
+    JIC $ATOI       ; C004H :: atoi
+
     ; ------------------------
     ;        128B STACK     :
     ; ------------------------
