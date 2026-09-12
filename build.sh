@@ -6,3 +6,4 @@ cd ../../
 
 # compilar binarios
 node Toolchain/sbin.js ScratchUnit/testPr.asm ScratchUnit/testPr.dec -d
+node Toolchain/sbin.js ScratchUnit/pt.asm ScratchUnit/pt.dec -d
