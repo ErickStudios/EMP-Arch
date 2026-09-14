@@ -382,7 +382,7 @@ export function LineAsm(line, context) {
         }
         else if (peek().value == ';') return result;
         else if (parseSize(peek().value.toLowerCase()) !== undefined) {
-            let sizeof = parseSize(consume().value);
+            let sizeof = parseSize(consume().value.toLowerCase());
             let primarys = toBigEndianBytes(parseSyntx(), sizeof);
             while (peek() && peek().value === ",") {
             consume();
