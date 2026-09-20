@@ -173,6 +173,8 @@ VL_ATTR_COLD void Vcpu___024root___ctor_var_reset(Vcpu___024root* vlSelf) {
     vlSelf->cpu__DOT__ofr = VL_RAND_RESET_I(9);
     vlSelf->cpu__DOT__altpr = VL_RAND_RESET_I(8);
     vlSelf->cpu__DOT__alt2r = VL_RAND_RESET_I(8);
+    vlSelf->cpu__DOT__xtr = VL_RAND_RESET_I(16);
+    vlSelf->cpu__DOT__hr = VL_RAND_RESET_I(8);
     vlSelf->cpu__DOT__rcf = VL_RAND_RESET_I(1);
     vlSelf->__Vtrigprevexpr___TOP__clk__0 = VL_RAND_RESET_I(1);
     vlSelf->__Vtrigprevexpr___TOP__rst__0 = VL_RAND_RESET_I(1);

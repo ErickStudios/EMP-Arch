@@ -34,6 +34,8 @@ reg         b_rec;
 reg [8:0]   ofr;
 reg [7:0]   altpr;
 reg [7:0]   alt2r;
+reg [15:0]  xtr; // extendor register
+reg [7:0]   hr; // high
 
 // flags
 wire        rcf; // carry flag
@@ -63,6 +65,11 @@ begin
             getReg = alt2r;
         end
     end
+    4'h9: begin
+        if (MODEL_TYPE >= 1028) begin 
+            getReg = hr;
+        end
+    end
     default: getReg = 8'h00;
     endcase
 end
@@ -86,6 +93,11 @@ begin
     4'h8: begin
         if (MODEL_TYPE >= 1000) begin 
             alt2r = val;
+        end
+    end
+    4'h9: begin
+        if (MODEL_TYPE >= 1028) begin 
+            hr = val;
         end
     end
     default: ;
@@ -206,9 +218,18 @@ always @(posedge clk or posedge rst) begin
                         ar = ar | getReg(reg_r);
                         ix <= 1'b1;
                     end
-                    // 03 6r: MUL r (a = a * r)
+                    // 03 6r: MUL r (h:a = h:a * r)
                     else if (ins[7:4] == 4'h6 && MODEL_TYPE >= 1028) begin
-                        ar = ar * getReg(reg_r);
+                        xtr = {hr, ar} * getReg(reg_r);
+                        ar = xtr[7:0];
+                        hr = xtr[15:8];
+                        ix <= 1'b1;
+                    end
+                    // 03 7r: ML8 r (h:a = a * r)
+                    else if (ins[7:4] == 4'h7 && MODEL_TYPE >= 1028) begin
+                        xtr = ar * getReg(reg_r);
+                        ar = xtr[7:0];
+                        hr = xtr[15:8];
                         ix <= 1'b1;
                     end
                 end
@@ -384,6 +405,13 @@ always @(posedge clk or posedge rst) begin
                             fr[2] = 0;
                             fr[3] = 1;
                         end
+                    end
+                end
+
+                // 13 VV: CHH $VV = h = $VV
+                8'h13: begin
+                    if (MODEL_TYPE >= 1028) begin
+                        hr = imm_vv;
                     end
                 end
 

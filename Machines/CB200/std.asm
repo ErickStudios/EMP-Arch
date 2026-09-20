@@ -1,6 +1,11 @@
 
     local 0e000h
 
+    ; firmware header
+    dd (tos+0) ; stack def header in firmware
+    rsv 128 ; reserve stack
+tos:
+
 ; define the extensions that the
 ; cpu interceptor of the CHESEBOX 200
 def vrt (60h (r r))
@@ -26,6 +31,30 @@ tty:
     ldc $1 ; equal flag
     jic $.cr ; line feed
 
+    lds $term_col ; terminal col
+    cpx ; copy to x
+    lds $term_row ; row
+    chc $20 ; cols
+    ml8 %c ; multiply
+    adc %x ; add
+    chc $2 ; mul value
+    ml8 %c ; multiply ignoring high (ml8)
+    cpy ; copy to y
+    mva %h ; reg
+    cpx ; copy to x
+    pag $0D0H ; page
+    mva %p ; copy page
+    adc %x ; extend page
+    cpp ; copy to page
+    mva %z ; move the old char
+    sta %y ; standart page write with y
+           ; the page is extended always
+    
+    zrc ; for avoid problems
+    lds $term_col ; read
+    chc $1 ; the value
+    adc %c ; increments
+    str $term_col ; write back
     ret
 
 .lf:
@@ -33,15 +62,23 @@ tty:
 .cr:
     ret
 
-
 start:
     ; reset terminal tty propertys
     str $term_row, $0
     str $term_col, $0
+    
+    lik 
+    stc
+    cha $'X'
+    jic $tty
+    lik
+    stc
+    cha $'D'
+    jic $tty
 
-    str $0D000H, $'H'
+    ;str $0D000H, $'H'
     str $0D001H, $01FH
-    str $0D002H, $'I'
+    ;str $0D002H, $'I'
     str $0D003H, $01FH
 
 hang:

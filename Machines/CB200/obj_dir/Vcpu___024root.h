@@ -41,6 +41,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vcpu___024root final : public VerilatedModule
     CData/*0:0*/ cpu__DOT__b_rec;
     CData/*7:0*/ cpu__DOT__altpr;
     CData/*7:0*/ cpu__DOT__alt2r;
+    CData/*7:0*/ cpu__DOT__hr;
     CData/*0:0*/ cpu__DOT__rcf;
     CData/*0:0*/ __VstlFirstIteration;
     CData/*0:0*/ __Vtrigprevexpr___TOP__clk__0;
@@ -49,6 +50,7 @@ class alignas(VL_CACHE_LINE_BYTES) Vcpu___024root final : public VerilatedModule
     VL_OUT16(adr,15,0);
     VL_IN16(ins,15,0);
     SData/*8:0*/ cpu__DOT__ofr;
+    SData/*15:0*/ cpu__DOT__xtr;
     IData/*31:0*/ __VactIterCount;
     VlTriggerVec<1> __VstlTriggered;
     VlTriggerVec<1> __VactTriggered;

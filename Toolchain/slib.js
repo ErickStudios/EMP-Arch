@@ -113,10 +113,10 @@ export function LineAsm(line, context) {
         return a;
     }
     function getRegOf(name) {
-        return ({A:0,B:1,C:2,P:3,X:4,Y:5,Z:6,W:7,M:8,K:15})[name.toUpperCase()];
+        return ({A:0,B:1,C:2,P:3,X:4,Y:5,Z:6,W:7,M:8,H:9,K:15})[name.toUpperCase()];
     }
     function getFlagOf(name) {
-        return ({C:0,D:6,})[name.toUpperCase()];
+        return ({C:0,D:6})[name.toUpperCase()];
     }
     function getOpcodeOf(name) {
         let nam = name.toUpperCase();
@@ -134,6 +134,9 @@ export function LineAsm(line, context) {
         }
         if (nam == 'MUL') {
             return [0x03, [0x6, 'r']];
+        }
+        if (nam == 'ML8') {
+            return [0x03, [0x7, 'r']];
         }
         if (nam == 'SHR') {
             return [0x03, [0x2, 'r']];
@@ -191,6 +194,9 @@ export function LineAsm(line, context) {
         }
         if (nam == 'CHC') {
             return [0x0D, 'n'];
+        }
+        if (nam == 'CHH') {
+            return [0x13, 'n'];
         }
         if (nam == 'LDA') {
             return [0x05, [0x1, 'r']];
@@ -459,6 +465,65 @@ export function LineAsm(line, context) {
         }
     }
     return result;
+}
+export function LineDisasm(bytes, context=null) {
+  if(bytes.length < 2) return `DB ${bytes[0]}`;
+  const [op, arg] = bytes
+  const hi = (arg >> 4) & 0xF
+  const lo = arg & 0xF
+
+  const regName = (n) => (['A','B','C','P','X','Y','Z','W','M','H','?', '?','?','?','?','K'][n] || `R${n}`)
+  const flagName = (n) => n===0? 'C' : n===6? 'D' : `F${n}`
+
+  const reg = `%${regName(lo)}`
+
+  switch(op){
+    case 0x00:
+      if(hi===0) return `TSA ${reg}`
+      if(hi===1) return `MVA ${reg}`
+      break
+    case 0x02:
+      if((hi & 0xC) === 0x0) return `ZR${flagName(lo)}`
+      if((hi & 0xC) === 0x1) return `ST${flagName(lo)}`
+      break
+    case 0x03:
+      if(hi===0) return `ADC ${reg}`
+      if(hi===1) return `SBB ${reg}`
+      if(hi===2) return `SHR ${reg}`
+      if(hi===3) return `SHL ${reg}`
+      if(hi===4) return `AND ${reg}`
+      if(hi===5) return `ORB ${reg}`
+      if(hi===6) return `MUL ${reg}`
+      if(hi===7) return `ML8 ${reg}`
+      break
+    case 0x05:
+      if(hi===0) return `STA ${reg}`
+      if(hi===1) return `LDA ${reg}`
+      if(hi===2) return `LDB ${reg}`
+      break
+    case 0x0F:
+      if(hi===0) return `SSA ${reg}`
+      if(hi===1) return `SLA ${reg}`
+      break
+    case 0x08:
+      return `BRC ${reg}`
+
+    // 1 arg numérico $n
+    case 0x04: return `PAG $${arg.toString(16).toUpperCase()}`
+    case 0x10: return `PG2 $${arg.toString(16).toUpperCase()}`
+    case 0x11: return `PG3 $${arg.toString(16).toUpperCase()}`
+    case 0x06: return `CHA $${arg}`
+    case 0x09: return `CHB $${arg}`
+    case 0x0A: return `CTA $${arg}`
+    case 0x0B: return `BCC $${arg}`
+    case 0x07: return `LDC $${arg}`
+    case 0x0C: return `CDA $${arg}`
+    case 0x0D: return `CHC $${arg}`
+    case 0x0E: return `CHZ $${arg}`
+    case 0x13: return `CHH $${arg}`
+    case 0x12: return `TWI $${arg}`
+  }
+  return `db $${op.toString(16)}, $${arg.toString(16)} ;??`
 }
 export function parseAsm(code) {
     let ctx = new Context();

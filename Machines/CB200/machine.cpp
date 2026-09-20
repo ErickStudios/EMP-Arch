@@ -18,6 +18,8 @@ struct StdRam {
 
     // Write Function For Standart Ram
     void Write(uint32_t adr, uint8_t val) {
+        printf("Write 0x%08x = 0x%02x\n", adr, val);
+
         // Address of RAM0
         if (adr < 16384) ram0[adr] = val;
 
@@ -27,9 +29,9 @@ struct StdRam {
             disp_pau = true;
          }
 
-         // Well Well, i give you a micro space in the ROM for dont
-         // make Jokes to the programs that uses the low memory
-         if (adr >= 0xE000 && adr < 0xE400) std_rom[adr - 0xE000] = val;
+        // Well Well, i give you a micro space in the ROM for dont
+        // make Jokes to the programs that uses the low memory
+        if (adr >= 0xE000 && adr < 0xE400) std_rom[adr - 0xE000] = val;
     }
     // Read Function For Standart Ram
     uint8_t Read(uint32_t adr) {
@@ -170,6 +172,8 @@ int main(int argc, char** argv) {
     printf("Guest has not wake up the display (yet.)\n");
     printf("(TIP: you can wake up the display with a simple write in VRAM)\n");
 
+    bool lnk = false;
+
     while (cycl) {
         // Fetch and run
         uint16_t ins = (ram.Read(pc) << 8) | ram.Read(pc + 1);
@@ -196,6 +200,34 @@ int main(int argc, char** argv) {
             setReg(&cpu, (ins >> 4) & 0xF, high_adr >> 8);
             setReg(&cpu, ins & 0xF, high_adr & 0xFF);
         }
+        // Link at Next Jump
+        else if (ins == 0x5000) {
+            lnk = true;
+        }
+        // Return from stack
+        else if (ins == 0x5001) {
+
+            uint32_t stk = (
+                (ram.std_rom[0] << 24) | 
+                (ram.std_rom[1] << 16) | 
+                (ram.std_rom[2] << 8) | 
+                ram.std_rom[3]
+            );
+
+            pc = ((
+                (ram.Read(stk) << 24)) |
+                (ram.Read(stk + 1) << 16) |
+                (ram.Read(stk + 2) << 8) |
+                ram.Read(stk + 3)
+            ) - 2;
+
+            stk += 4;
+
+            ram.std_rom[0] = (stk >> 24) & 0xFF;
+            ram.std_rom[1] = (stk >> 16) & 0xFF;
+            ram.std_rom[2] = (stk >> 8) & 0xFF;
+            ram.std_rom[3] = stk & 0xFF;
+        }
         
         exec(&cpu, ins);
 
@@ -208,20 +240,45 @@ int main(int argc, char** argv) {
         if (cpu.rex) cpu.rvx = ram.Read(((use_virt_adr ? high_adr : 0) << 16) | cpu.adr);
 
         // Jump Flag
-        if (cpu.jf && !cpu.exi) pc = ((use_virt_adr ? high_adr : 0) << 16) | cpu.adr;
+        if (cpu.jf && !cpu.exi) { 
+            if (lnk) {
+                lnk = false;
+                uint32_t stk = (
+                    (ram.std_rom[0] << 24) | 
+                    (ram.std_rom[1] << 16) | 
+                    (ram.std_rom[2] << 8) | 
+                    ram.std_rom[3]
+                );
+
+                stk -= 4;
+                ram.Write(stk, (pc >> 24) & 0xFF);
+                ram.Write(stk+1, (pc >> 16) & 0xFF);
+                ram.Write(stk+2, (pc >> 8) & 0xFF);
+                ram.Write(stk+3, pc & 0xFF);
+
+                ram.std_rom[0] = (stk >> 24) & 0xFF;
+                ram.std_rom[1] = (stk >> 16) & 0xFF;
+                ram.std_rom[2] = (stk >> 8) & 0xFF;
+                ram.std_rom[3] = stk & 0xFF;
+                //printf("call\n");
+
+            }
+
+            pc = ((use_virt_adr ? high_adr : 0) << 16) | cpu.adr;
+        }
         // Else Increments PC
         else pc = pc + 2;
 
         if (itrd > 0x423) {
             if (ram.disp_pau) { 
-                drw_screen(&ram);
+                //drw_screen(&ram);
                 ram.disp_pau = false;
             }
             itrd = 0;
         }
 
         itrd++;
-        //cycl--;
+        cycl--;
     }
 
     return 0;

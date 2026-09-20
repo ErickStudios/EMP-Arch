@@ -9,7 +9,8 @@
     SHL r   ; a = a << r            03 3r
     AND r   ; a = a & r             03 4r
     ORB r   ; a = a | r             03 5r
-    MUL r   ; a = a * r             03 6r (EMP-1028+)
+    MUL r   ; h:a = h:a * r         03 6r (EMP-1028+)
+    ML8 r   ; h:a = a * r           03 7r (EMP-1028+)
     PAG $VV ; page = 0xVV           04 VV
     STA r   ; [page:r] = a          05 0r
     LDA r   ; a = [page:r]          05 1r
@@ -28,7 +29,7 @@
     PG2 $VV ; alter = 0xVV          10 VV
     PG3 $VV ; alte2 = 0xVV          11 VV
     TWI $VV ; a test 0xVV           12 VV (EMP-1028+)
-
+    CHH $VV ; h = $VV               13 VV (EMP-1028+)
     LDS $VV ; (MACRO) PAG $VV.H CDA $VV.L
     STR $VV ; (MACRO) PAG $VV.H CTA $VV.L
     JIC $VV ; (MACRO) PAG $VV.H BCC $VV.L

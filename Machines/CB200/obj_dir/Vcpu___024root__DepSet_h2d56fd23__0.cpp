@@ -124,18 +124,22 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
     __Vfunc_cpu__DOT__getReg__26__Vfuncout = 0;
     CData/*3:0*/ __Vfunc_cpu__DOT__getReg__26__id;
     __Vfunc_cpu__DOT__getReg__26__id = 0;
-    CData/*3:0*/ __Vtask_cpu__DOT__setRegister__27__id;
-    __Vtask_cpu__DOT__setRegister__27__id = 0;
-    CData/*7:0*/ __Vtask_cpu__DOT__setRegister__27__val;
-    __Vtask_cpu__DOT__setRegister__27__val = 0;
-    CData/*7:0*/ __Vfunc_cpu__DOT__getReg__28__Vfuncout;
-    __Vfunc_cpu__DOT__getReg__28__Vfuncout = 0;
-    CData/*3:0*/ __Vfunc_cpu__DOT__getReg__28__id;
-    __Vfunc_cpu__DOT__getReg__28__id = 0;
+    CData/*7:0*/ __Vfunc_cpu__DOT__getReg__27__Vfuncout;
+    __Vfunc_cpu__DOT__getReg__27__Vfuncout = 0;
+    CData/*3:0*/ __Vfunc_cpu__DOT__getReg__27__id;
+    __Vfunc_cpu__DOT__getReg__27__id = 0;
+    CData/*3:0*/ __Vtask_cpu__DOT__setRegister__28__id;
+    __Vtask_cpu__DOT__setRegister__28__id = 0;
+    CData/*7:0*/ __Vtask_cpu__DOT__setRegister__28__val;
+    __Vtask_cpu__DOT__setRegister__28__val = 0;
     CData/*7:0*/ __Vfunc_cpu__DOT__getReg__29__Vfuncout;
     __Vfunc_cpu__DOT__getReg__29__Vfuncout = 0;
     CData/*3:0*/ __Vfunc_cpu__DOT__getReg__29__id;
     __Vfunc_cpu__DOT__getReg__29__id = 0;
+    CData/*7:0*/ __Vfunc_cpu__DOT__getReg__30__Vfuncout;
+    __Vfunc_cpu__DOT__getReg__30__Vfuncout = 0;
+    CData/*3:0*/ __Vfunc_cpu__DOT__getReg__30__id;
+    __Vfunc_cpu__DOT__getReg__30__id = 0;
     CData/*0:0*/ __Vdly__rex;
     __Vdly__rex = 0;
     CData/*0:0*/ __Vdly__wex;
@@ -147,7 +151,6 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
     CData/*31:0*/ __Vtemp_8;
     CData/*31:0*/ __Vtemp_9;
     CData/*31:0*/ __Vtemp_10;
-    CData/*31:0*/ __Vtemp_11;
     // Body
     __Vdly__ir = vlSelf->ir;
     __Vdly__wex = vlSelf->wex;
@@ -167,7 +170,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                     : 
                                                    ((1U 
                                                      & (IData)(__Vfunc_cpu__DOT__getReg__0__id))
-                                                     ? 0U
+                                                     ? (IData)(vlSelf->cpu__DOT__hr)
                                                      : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                   : 
                                                  ((4U 
@@ -208,7 +211,9 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                           >> 2U)))) {
                 if ((1U & (~ ((IData)(__Vtask_cpu__DOT__setRegister__1__id) 
                               >> 1U)))) {
-                    if ((1U & (~ (IData)(__Vtask_cpu__DOT__setRegister__1__id)))) {
+                    if ((1U & (IData)(__Vtask_cpu__DOT__setRegister__1__id))) {
+                        vlSelf->cpu__DOT__hr = __Vtask_cpu__DOT__setRegister__1__val;
+                    } else {
                         vlSelf->cpu__DOT__alt2r = __Vtask_cpu__DOT__setRegister__1__val;
                     }
                 }
@@ -280,7 +285,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                 vlSelf->ix = 1U;
             } else if ((0x200U & (IData)(vlSelf->ins))) {
                 if ((0x100U & (IData)(vlSelf->ins))) {
-                    vlSelf->ix = 1U;
+                    vlSelf->cpu__DOT__hr = (0xffU & (IData)(vlSelf->ins));
                 } else {
                     vlSelf->cpu__DOT__tr = (0xffU & 
                                             ((IData)(vlSelf->cpu__DOT__ar) 
@@ -338,7 +343,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                      : 
                                                     ((1U 
                                                       & (IData)(__Vfunc_cpu__DOT__getReg__2__id))
-                                                      ? 0U
+                                                      ? (IData)(vlSelf->cpu__DOT__hr)
                                                       : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                 : (
                                                    (4U 
@@ -394,7 +399,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                         : 
                                                        ((1U 
                                                          & (IData)(__Vfunc_cpu__DOT__getReg__3__id))
-                                                         ? 0U
+                                                         ? (IData)(vlSelf->cpu__DOT__hr)
                                                          : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                       : 
                                                      ((4U 
@@ -453,7 +458,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                         : 
                                                        ((1U 
                                                          & (IData)(__Vfunc_cpu__DOT__getReg__5__id))
-                                                         ? 0U
+                                                         ? (IData)(vlSelf->cpu__DOT__hr)
                                                          : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                       : 
                                                      ((4U 
@@ -494,7 +499,10 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                    ((IData)(__Vtask_cpu__DOT__setRegister__4__id) 
                                                     >> 1U)))) {
                                             if ((1U 
-                                                 & (~ (IData)(__Vtask_cpu__DOT__setRegister__4__id)))) {
+                                                 & (IData)(__Vtask_cpu__DOT__setRegister__4__id))) {
+                                                vlSelf->cpu__DOT__hr 
+                                                    = __Vtask_cpu__DOT__setRegister__4__val;
+                                            } else {
                                                 vlSelf->cpu__DOT__alt2r 
                                                     = __Vtask_cpu__DOT__setRegister__4__val;
                                             }
@@ -553,7 +561,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                         : 
                                                        ((1U 
                                                          & (IData)(__Vfunc_cpu__DOT__getReg__6__id))
-                                                         ? 0U
+                                                         ? (IData)(vlSelf->cpu__DOT__hr)
                                                          : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                       : 
                                                      ((4U 
@@ -611,7 +619,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                         : 
                                                        ((1U 
                                                          & (IData)(__Vfunc_cpu__DOT__getReg__8__id))
-                                                         ? 0U
+                                                         ? (IData)(vlSelf->cpu__DOT__hr)
                                                          : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                       : 
                                                      ((4U 
@@ -653,7 +661,10 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                    ((IData)(__Vtask_cpu__DOT__setRegister__7__id) 
                                                     >> 1U)))) {
                                             if ((1U 
-                                                 & (~ (IData)(__Vtask_cpu__DOT__setRegister__7__id)))) {
+                                                 & (IData)(__Vtask_cpu__DOT__setRegister__7__id))) {
+                                                vlSelf->cpu__DOT__hr 
+                                                    = __Vtask_cpu__DOT__setRegister__7__val;
+                                            } else {
                                                 vlSelf->cpu__DOT__alt2r 
                                                     = __Vtask_cpu__DOT__setRegister__7__val;
                                             }
@@ -715,7 +726,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                      : 
                                                     ((1U 
                                                       & (IData)(__Vfunc_cpu__DOT__getReg__9__id))
-                                                      ? 0U
+                                                      ? (IData)(vlSelf->cpu__DOT__hr)
                                                       : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                 : (
                                                    (4U 
@@ -770,7 +781,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                         : 
                                                        ((1U 
                                                          & (IData)(__Vfunc_cpu__DOT__getReg__10__id))
-                                                         ? 0U
+                                                         ? (IData)(vlSelf->cpu__DOT__hr)
                                                          : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                       : 
                                                      ((4U 
@@ -829,7 +840,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                         : 
                                                        ((1U 
                                                          & (IData)(__Vfunc_cpu__DOT__getReg__12__id))
-                                                         ? 0U
+                                                         ? (IData)(vlSelf->cpu__DOT__hr)
                                                          : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                       : 
                                                      ((4U 
@@ -870,7 +881,10 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                    ((IData)(__Vtask_cpu__DOT__setRegister__11__id) 
                                                     >> 1U)))) {
                                             if ((1U 
-                                                 & (~ (IData)(__Vtask_cpu__DOT__setRegister__11__id)))) {
+                                                 & (IData)(__Vtask_cpu__DOT__setRegister__11__id))) {
+                                                vlSelf->cpu__DOT__hr 
+                                                    = __Vtask_cpu__DOT__setRegister__11__val;
+                                            } else {
                                                 vlSelf->cpu__DOT__alt2r 
                                                     = __Vtask_cpu__DOT__setRegister__11__val;
                                             }
@@ -929,7 +943,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                         : 
                                                        ((1U 
                                                          & (IData)(__Vfunc_cpu__DOT__getReg__13__id))
-                                                         ? 0U
+                                                         ? (IData)(vlSelf->cpu__DOT__hr)
                                                          : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                       : 
                                                      ((4U 
@@ -987,7 +1001,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                         : 
                                                        ((1U 
                                                          & (IData)(__Vfunc_cpu__DOT__getReg__15__id))
-                                                         ? 0U
+                                                         ? (IData)(vlSelf->cpu__DOT__hr)
                                                          : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                       : 
                                                      ((4U 
@@ -1029,7 +1043,10 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                    ((IData)(__Vtask_cpu__DOT__setRegister__14__id) 
                                                     >> 1U)))) {
                                             if ((1U 
-                                                 & (~ (IData)(__Vtask_cpu__DOT__setRegister__14__id)))) {
+                                                 & (IData)(__Vtask_cpu__DOT__setRegister__14__id))) {
+                                                vlSelf->cpu__DOT__hr 
+                                                    = __Vtask_cpu__DOT__setRegister__14__val;
+                                            } else {
                                                 vlSelf->cpu__DOT__alt2r 
                                                     = __Vtask_cpu__DOT__setRegister__14__val;
                                             }
@@ -1118,7 +1135,8 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                            ((2U & (IData)(__Vfunc_cpu__DOT__getReg__16__id))
                                              ? 0U : 
                                             ((1U & (IData)(__Vfunc_cpu__DOT__getReg__16__id))
-                                              ? 0U : (IData)(vlSelf->cpu__DOT__alt2r))))
+                                              ? (IData)(vlSelf->cpu__DOT__hr)
+                                              : (IData)(vlSelf->cpu__DOT__alt2r))))
                                         : ((4U & (IData)(__Vfunc_cpu__DOT__getReg__16__id))
                                             ? ((2U 
                                                 & (IData)(__Vfunc_cpu__DOT__getReg__16__id))
@@ -1177,7 +1195,8 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                            ((2U & (IData)(__Vfunc_cpu__DOT__getReg__17__id))
                                              ? 0U : 
                                             ((1U & (IData)(__Vfunc_cpu__DOT__getReg__17__id))
-                                              ? 0U : (IData)(vlSelf->cpu__DOT__alt2r))))
+                                              ? (IData)(vlSelf->cpu__DOT__hr)
+                                              : (IData)(vlSelf->cpu__DOT__alt2r))))
                                         : ((4U & (IData)(__Vfunc_cpu__DOT__getReg__17__id))
                                             ? ((2U 
                                                 & (IData)(__Vfunc_cpu__DOT__getReg__17__id))
@@ -1221,7 +1240,8 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                            ((2U & (IData)(__Vfunc_cpu__DOT__getReg__18__id))
                                              ? 0U : 
                                             ((1U & (IData)(__Vfunc_cpu__DOT__getReg__18__id))
-                                              ? 0U : (IData)(vlSelf->cpu__DOT__alt2r))))
+                                              ? (IData)(vlSelf->cpu__DOT__hr)
+                                              : (IData)(vlSelf->cpu__DOT__alt2r))))
                                         : ((4U & (IData)(__Vfunc_cpu__DOT__getReg__18__id))
                                             ? ((2U 
                                                 & (IData)(__Vfunc_cpu__DOT__getReg__18__id))
@@ -1264,7 +1284,8 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                            ((2U & (IData)(__Vfunc_cpu__DOT__getReg__19__id))
                                              ? 0U : 
                                             ((1U & (IData)(__Vfunc_cpu__DOT__getReg__19__id))
-                                              ? 0U : (IData)(vlSelf->cpu__DOT__alt2r))))
+                                              ? (IData)(vlSelf->cpu__DOT__hr)
+                                              : (IData)(vlSelf->cpu__DOT__alt2r))))
                                         : ((4U & (IData)(__Vfunc_cpu__DOT__getReg__19__id))
                                             ? ((2U 
                                                 & (IData)(__Vfunc_cpu__DOT__getReg__19__id))
@@ -1325,7 +1346,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                       : 
                                                      ((1U 
                                                        & (IData)(__Vfunc_cpu__DOT__getReg__20__id))
-                                                       ? 0U
+                                                       ? (IData)(vlSelf->cpu__DOT__hr)
                                                        : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                     : 
                                                    ((4U 
@@ -1386,7 +1407,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                      : 
                                                     ((1U 
                                                       & (IData)(__Vfunc_cpu__DOT__getReg__21__id))
-                                                      ? 0U
+                                                      ? (IData)(vlSelf->cpu__DOT__hr)
                                                       : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                 : (
                                                    (4U 
@@ -1439,7 +1460,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                     : 
                                                    ((1U 
                                                      & (IData)(__Vfunc_cpu__DOT__getReg__22__id))
-                                                     ? 0U
+                                                     ? (IData)(vlSelf->cpu__DOT__hr)
                                                      : (IData)(vlSelf->cpu__DOT__alt2r))))
                                             : ((4U 
                                                 & (IData)(__Vfunc_cpu__DOT__getReg__22__id))
@@ -1490,7 +1511,7 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                                     : 
                                                    ((1U 
                                                      & (IData)(__Vfunc_cpu__DOT__getReg__23__id))
-                                                     ? 0U
+                                                     ? (IData)(vlSelf->cpu__DOT__hr)
                                                      : (IData)(vlSelf->cpu__DOT__alt2r))))
                                             : ((4U 
                                                 & (IData)(__Vfunc_cpu__DOT__getReg__23__id))
@@ -1536,7 +1557,8 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                            ((2U & (IData)(__Vfunc_cpu__DOT__getReg__24__id))
                                              ? 0U : 
                                             ((1U & (IData)(__Vfunc_cpu__DOT__getReg__24__id))
-                                              ? 0U : (IData)(vlSelf->cpu__DOT__alt2r))))
+                                              ? (IData)(vlSelf->cpu__DOT__hr)
+                                              : (IData)(vlSelf->cpu__DOT__alt2r))))
                                         : ((4U & (IData)(__Vfunc_cpu__DOT__getReg__24__id))
                                             ? ((2U 
                                                 & (IData)(__Vfunc_cpu__DOT__getReg__24__id))
@@ -1578,7 +1600,8 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                            ((2U & (IData)(__Vfunc_cpu__DOT__getReg__25__id))
                                              ? 0U : 
                                             ((1U & (IData)(__Vfunc_cpu__DOT__getReg__25__id))
-                                              ? 0U : (IData)(vlSelf->cpu__DOT__alt2r))))
+                                              ? (IData)(vlSelf->cpu__DOT__hr)
+                                              : (IData)(vlSelf->cpu__DOT__alt2r))))
                                         : ((4U & (IData)(__Vfunc_cpu__DOT__getReg__25__id))
                                             ? ((2U 
                                                 & (IData)(__Vfunc_cpu__DOT__getReg__25__id))
@@ -1609,55 +1632,126 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                     vlSelf->ix = 1U;
                 } else if ((6U == (0xfU & ((IData)(vlSelf->ins) 
                                            >> 4U)))) {
-                    __Vtemp_11 = (0xffU & ((IData)(vlSelf->cpu__DOT__ar) 
-                                           * ([&]() {
-                                    __Vfunc_cpu__DOT__getReg__26__id 
-                                        = (0xfU & (IData)(vlSelf->ins));
-                                    __Vfunc_cpu__DOT__getReg__26__Vfuncout 
-                                        = ((8U & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
-                                            ? ((4U 
+                    vlSelf->cpu__DOT__xtr = (0xffffU 
+                                             & ((((IData)(vlSelf->cpu__DOT__hr) 
+                                                  << 8U) 
+                                                 | (IData)(vlSelf->cpu__DOT__ar)) 
+                                                * VL_EXTEND_II(16,8, 
+                                                               ([&]() {
+                                        __Vfunc_cpu__DOT__getReg__26__id 
+                                            = (0xfU 
+                                               & (IData)(vlSelf->ins));
+                                        __Vfunc_cpu__DOT__getReg__26__Vfuncout 
+                                            = ((8U 
                                                 & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
-                                                ? 0U
-                                                : (
-                                                   (2U 
+                                                ? (
+                                                   (4U 
                                                     & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
                                                     ? 0U
                                                     : 
-                                                   ((1U 
+                                                   ((2U 
                                                      & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
                                                      ? 0U
-                                                     : (IData)(vlSelf->cpu__DOT__alt2r))))
-                                            : ((4U 
-                                                & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
-                                                ? (
-                                                   (2U 
-                                                    & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
-                                                    ? 
-                                                   ((1U 
-                                                     & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
-                                                     ? (IData)(vlSelf->cpu__DOT__altpr)
-                                                     : (IData)(vlSelf->cpu__DOT__zr))
-                                                    : 
-                                                   ((1U 
-                                                     & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
-                                                     ? (IData)(vlSelf->cpu__DOT__yr)
-                                                     : (IData)(vlSelf->cpu__DOT__xr)))
+                                                     : 
+                                                    ((1U 
+                                                      & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
+                                                      ? (IData)(vlSelf->cpu__DOT__hr)
+                                                      : (IData)(vlSelf->cpu__DOT__alt2r))))
                                                 : (
-                                                   (2U 
+                                                   (4U 
                                                     & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
                                                     ? 
-                                                   ((1U 
+                                                   ((2U 
                                                      & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
-                                                     ? (IData)(vlSelf->cpu__DOT__pr)
-                                                     : (IData)(vlSelf->cpu__DOT__cr))
+                                                     ? 
+                                                    ((1U 
+                                                      & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
+                                                      ? (IData)(vlSelf->cpu__DOT__altpr)
+                                                      : (IData)(vlSelf->cpu__DOT__zr))
+                                                     : 
+                                                    ((1U 
+                                                      & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
+                                                      ? (IData)(vlSelf->cpu__DOT__yr)
+                                                      : (IData)(vlSelf->cpu__DOT__xr)))
                                                     : 
-                                                   ((1U 
+                                                   ((2U 
                                                      & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
-                                                     ? (IData)(vlSelf->cpu__DOT__br)
-                                                     : (IData)(vlSelf->cpu__DOT__ar)))));
-                                }(), (IData)(__Vfunc_cpu__DOT__getReg__26__Vfuncout))));
-                    vlSelf->cpu__DOT__ar = __Vtemp_11;
+                                                     ? 
+                                                    ((1U 
+                                                      & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
+                                                      ? (IData)(vlSelf->cpu__DOT__pr)
+                                                      : (IData)(vlSelf->cpu__DOT__cr))
+                                                     : 
+                                                    ((1U 
+                                                      & (IData)(__Vfunc_cpu__DOT__getReg__26__id))
+                                                      ? (IData)(vlSelf->cpu__DOT__br)
+                                                      : (IData)(vlSelf->cpu__DOT__ar)))));
+                                    }(), (IData)(__Vfunc_cpu__DOT__getReg__26__Vfuncout)))));
                     vlSelf->ix = 1U;
+                    vlSelf->cpu__DOT__ar = (0xffU & (IData)(vlSelf->cpu__DOT__xtr));
+                    vlSelf->cpu__DOT__hr = (0xffU & 
+                                            ((IData)(vlSelf->cpu__DOT__xtr) 
+                                             >> 8U));
+                } else if ((7U == (0xfU & ((IData)(vlSelf->ins) 
+                                           >> 4U)))) {
+                    vlSelf->cpu__DOT__xtr = (0xffffU 
+                                             & ((IData)(vlSelf->cpu__DOT__ar) 
+                                                * VL_EXTEND_II(16,8, 
+                                                               ([&]() {
+                                        __Vfunc_cpu__DOT__getReg__27__id 
+                                            = (0xfU 
+                                               & (IData)(vlSelf->ins));
+                                        __Vfunc_cpu__DOT__getReg__27__Vfuncout 
+                                            = ((8U 
+                                                & (IData)(__Vfunc_cpu__DOT__getReg__27__id))
+                                                ? (
+                                                   (4U 
+                                                    & (IData)(__Vfunc_cpu__DOT__getReg__27__id))
+                                                    ? 0U
+                                                    : 
+                                                   ((2U 
+                                                     & (IData)(__Vfunc_cpu__DOT__getReg__27__id))
+                                                     ? 0U
+                                                     : 
+                                                    ((1U 
+                                                      & (IData)(__Vfunc_cpu__DOT__getReg__27__id))
+                                                      ? (IData)(vlSelf->cpu__DOT__hr)
+                                                      : (IData)(vlSelf->cpu__DOT__alt2r))))
+                                                : (
+                                                   (4U 
+                                                    & (IData)(__Vfunc_cpu__DOT__getReg__27__id))
+                                                    ? 
+                                                   ((2U 
+                                                     & (IData)(__Vfunc_cpu__DOT__getReg__27__id))
+                                                     ? 
+                                                    ((1U 
+                                                      & (IData)(__Vfunc_cpu__DOT__getReg__27__id))
+                                                      ? (IData)(vlSelf->cpu__DOT__altpr)
+                                                      : (IData)(vlSelf->cpu__DOT__zr))
+                                                     : 
+                                                    ((1U 
+                                                      & (IData)(__Vfunc_cpu__DOT__getReg__27__id))
+                                                      ? (IData)(vlSelf->cpu__DOT__yr)
+                                                      : (IData)(vlSelf->cpu__DOT__xr)))
+                                                    : 
+                                                   ((2U 
+                                                     & (IData)(__Vfunc_cpu__DOT__getReg__27__id))
+                                                     ? 
+                                                    ((1U 
+                                                      & (IData)(__Vfunc_cpu__DOT__getReg__27__id))
+                                                      ? (IData)(vlSelf->cpu__DOT__pr)
+                                                      : (IData)(vlSelf->cpu__DOT__cr))
+                                                     : 
+                                                    ((1U 
+                                                      & (IData)(__Vfunc_cpu__DOT__getReg__27__id))
+                                                      ? (IData)(vlSelf->cpu__DOT__br)
+                                                      : (IData)(vlSelf->cpu__DOT__ar)))));
+                                    }(), (IData)(__Vfunc_cpu__DOT__getReg__27__Vfuncout)))));
+                    vlSelf->ix = 1U;
+                    vlSelf->cpu__DOT__ar = (0xffU & (IData)(vlSelf->cpu__DOT__xtr));
+                    vlSelf->cpu__DOT__hr = (0xffU & 
+                                            ((IData)(vlSelf->cpu__DOT__xtr) 
+                                             >> 8U));
                 }
             } else {
                 if ((0U == (0xfU & ((IData)(vlSelf->ins) 
@@ -1679,43 +1773,45 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                 vlSelf->ix = 1U;
             }
         } else if ((0x100U & (IData)(vlSelf->ins))) {
-            __Vtask_cpu__DOT__setRegister__27__val 
+            __Vtask_cpu__DOT__setRegister__28__val 
                 = vlSelf->cpu__DOT__ar;
-            __Vtask_cpu__DOT__setRegister__27__id = 
+            __Vtask_cpu__DOT__setRegister__28__id = 
                 (0xfU & (IData)(vlSelf->ins));
-            if ((8U & (IData)(__Vtask_cpu__DOT__setRegister__27__id))) {
-                if ((1U & (~ ((IData)(__Vtask_cpu__DOT__setRegister__27__id) 
+            if ((8U & (IData)(__Vtask_cpu__DOT__setRegister__28__id))) {
+                if ((1U & (~ ((IData)(__Vtask_cpu__DOT__setRegister__28__id) 
                               >> 2U)))) {
-                    if ((1U & (~ ((IData)(__Vtask_cpu__DOT__setRegister__27__id) 
+                    if ((1U & (~ ((IData)(__Vtask_cpu__DOT__setRegister__28__id) 
                                   >> 1U)))) {
-                        if ((1U & (~ (IData)(__Vtask_cpu__DOT__setRegister__27__id)))) {
+                        if ((1U & (IData)(__Vtask_cpu__DOT__setRegister__28__id))) {
+                            vlSelf->cpu__DOT__hr = __Vtask_cpu__DOT__setRegister__28__val;
+                        } else {
                             vlSelf->cpu__DOT__alt2r 
-                                = __Vtask_cpu__DOT__setRegister__27__val;
+                                = __Vtask_cpu__DOT__setRegister__28__val;
                         }
                     }
                 }
-            } else if ((4U & (IData)(__Vtask_cpu__DOT__setRegister__27__id))) {
-                if ((2U & (IData)(__Vtask_cpu__DOT__setRegister__27__id))) {
-                    if ((1U & (IData)(__Vtask_cpu__DOT__setRegister__27__id))) {
-                        vlSelf->cpu__DOT__altpr = __Vtask_cpu__DOT__setRegister__27__val;
+            } else if ((4U & (IData)(__Vtask_cpu__DOT__setRegister__28__id))) {
+                if ((2U & (IData)(__Vtask_cpu__DOT__setRegister__28__id))) {
+                    if ((1U & (IData)(__Vtask_cpu__DOT__setRegister__28__id))) {
+                        vlSelf->cpu__DOT__altpr = __Vtask_cpu__DOT__setRegister__28__val;
                     } else {
-                        vlSelf->cpu__DOT__zr = __Vtask_cpu__DOT__setRegister__27__val;
+                        vlSelf->cpu__DOT__zr = __Vtask_cpu__DOT__setRegister__28__val;
                     }
-                } else if ((1U & (IData)(__Vtask_cpu__DOT__setRegister__27__id))) {
-                    vlSelf->cpu__DOT__yr = __Vtask_cpu__DOT__setRegister__27__val;
+                } else if ((1U & (IData)(__Vtask_cpu__DOT__setRegister__28__id))) {
+                    vlSelf->cpu__DOT__yr = __Vtask_cpu__DOT__setRegister__28__val;
                 } else {
-                    vlSelf->cpu__DOT__xr = __Vtask_cpu__DOT__setRegister__27__val;
+                    vlSelf->cpu__DOT__xr = __Vtask_cpu__DOT__setRegister__28__val;
                 }
-            } else if ((2U & (IData)(__Vtask_cpu__DOT__setRegister__27__id))) {
-                if ((1U & (IData)(__Vtask_cpu__DOT__setRegister__27__id))) {
-                    vlSelf->cpu__DOT__pr = __Vtask_cpu__DOT__setRegister__27__val;
+            } else if ((2U & (IData)(__Vtask_cpu__DOT__setRegister__28__id))) {
+                if ((1U & (IData)(__Vtask_cpu__DOT__setRegister__28__id))) {
+                    vlSelf->cpu__DOT__pr = __Vtask_cpu__DOT__setRegister__28__val;
                 } else {
-                    vlSelf->cpu__DOT__cr = __Vtask_cpu__DOT__setRegister__27__val;
+                    vlSelf->cpu__DOT__cr = __Vtask_cpu__DOT__setRegister__28__val;
                 }
-            } else if ((1U & (IData)(__Vtask_cpu__DOT__setRegister__27__id))) {
-                vlSelf->cpu__DOT__br = __Vtask_cpu__DOT__setRegister__27__val;
+            } else if ((1U & (IData)(__Vtask_cpu__DOT__setRegister__28__id))) {
+                vlSelf->cpu__DOT__br = __Vtask_cpu__DOT__setRegister__28__val;
             } else {
-                vlSelf->cpu__DOT__ar = __Vtask_cpu__DOT__setRegister__27__val;
+                vlSelf->cpu__DOT__ar = __Vtask_cpu__DOT__setRegister__28__val;
             }
             vlSelf->ix = 1U;
         } else {
@@ -1724,42 +1820,43 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                 vlSelf->cpu__DOT__tr = (0xffU & ((IData)(vlSelf->cpu__DOT__ar) 
                                                  - 
                                                  ([&]() {
-                                __Vfunc_cpu__DOT__getReg__28__id 
+                                __Vfunc_cpu__DOT__getReg__29__id 
                                     = (0xfU & (IData)(vlSelf->ins));
-                                __Vfunc_cpu__DOT__getReg__28__Vfuncout 
-                                    = ((8U & (IData)(__Vfunc_cpu__DOT__getReg__28__id))
-                                        ? ((4U & (IData)(__Vfunc_cpu__DOT__getReg__28__id))
+                                __Vfunc_cpu__DOT__getReg__29__Vfuncout 
+                                    = ((8U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
+                                        ? ((4U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
                                             ? 0U : 
-                                           ((2U & (IData)(__Vfunc_cpu__DOT__getReg__28__id))
+                                           ((2U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
                                              ? 0U : 
-                                            ((1U & (IData)(__Vfunc_cpu__DOT__getReg__28__id))
-                                              ? 0U : (IData)(vlSelf->cpu__DOT__alt2r))))
-                                        : ((4U & (IData)(__Vfunc_cpu__DOT__getReg__28__id))
+                                            ((1U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
+                                              ? (IData)(vlSelf->cpu__DOT__hr)
+                                              : (IData)(vlSelf->cpu__DOT__alt2r))))
+                                        : ((4U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
                                             ? ((2U 
-                                                & (IData)(__Vfunc_cpu__DOT__getReg__28__id))
+                                                & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
                                                 ? (
                                                    (1U 
-                                                    & (IData)(__Vfunc_cpu__DOT__getReg__28__id))
+                                                    & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
                                                     ? (IData)(vlSelf->cpu__DOT__altpr)
                                                     : (IData)(vlSelf->cpu__DOT__zr))
                                                 : (
                                                    (1U 
-                                                    & (IData)(__Vfunc_cpu__DOT__getReg__28__id))
+                                                    & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
                                                     ? (IData)(vlSelf->cpu__DOT__yr)
                                                     : (IData)(vlSelf->cpu__DOT__xr)))
                                             : ((2U 
-                                                & (IData)(__Vfunc_cpu__DOT__getReg__28__id))
+                                                & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
                                                 ? (
                                                    (1U 
-                                                    & (IData)(__Vfunc_cpu__DOT__getReg__28__id))
+                                                    & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
                                                     ? (IData)(vlSelf->cpu__DOT__pr)
                                                     : (IData)(vlSelf->cpu__DOT__cr))
                                                 : (
                                                    (1U 
-                                                    & (IData)(__Vfunc_cpu__DOT__getReg__28__id))
+                                                    & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
                                                     ? (IData)(vlSelf->cpu__DOT__br)
                                                     : (IData)(vlSelf->cpu__DOT__ar)))));
-                            }(), (IData)(__Vfunc_cpu__DOT__getReg__28__Vfuncout))));
+                            }(), (IData)(__Vfunc_cpu__DOT__getReg__29__Vfuncout))));
                 vlSelf->cpu__DOT__fr = (0xfdU & (IData)(vlSelf->cpu__DOT__fr));
                 if ((0U == (IData)(vlSelf->cpu__DOT__tr))) {
                     vlSelf->cpu__DOT__fr = (2U | (IData)(vlSelf->cpu__DOT__fr));
@@ -1775,30 +1872,31 @@ VL_INLINE_OPT void Vcpu___024root___nba_sequent__TOP__0(Vcpu___024root* vlSelf) 
                                            << 2U));
             } else if ((1U == (0xfU & ((IData)(vlSelf->ins) 
                                        >> 4U)))) {
-                __Vfunc_cpu__DOT__getReg__29__id = 
+                __Vfunc_cpu__DOT__getReg__30__id = 
                     (0xfU & (IData)(vlSelf->ins));
-                __Vfunc_cpu__DOT__getReg__29__Vfuncout 
-                    = ((8U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
-                        ? ((4U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
-                            ? 0U : ((2U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
-                                     ? 0U : ((1U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
-                                              ? 0U : (IData)(vlSelf->cpu__DOT__alt2r))))
-                        : ((4U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
-                            ? ((2U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
-                                ? ((1U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
+                __Vfunc_cpu__DOT__getReg__30__Vfuncout 
+                    = ((8U & (IData)(__Vfunc_cpu__DOT__getReg__30__id))
+                        ? ((4U & (IData)(__Vfunc_cpu__DOT__getReg__30__id))
+                            ? 0U : ((2U & (IData)(__Vfunc_cpu__DOT__getReg__30__id))
+                                     ? 0U : ((1U & (IData)(__Vfunc_cpu__DOT__getReg__30__id))
+                                              ? (IData)(vlSelf->cpu__DOT__hr)
+                                              : (IData)(vlSelf->cpu__DOT__alt2r))))
+                        : ((4U & (IData)(__Vfunc_cpu__DOT__getReg__30__id))
+                            ? ((2U & (IData)(__Vfunc_cpu__DOT__getReg__30__id))
+                                ? ((1U & (IData)(__Vfunc_cpu__DOT__getReg__30__id))
                                     ? (IData)(vlSelf->cpu__DOT__altpr)
                                     : (IData)(vlSelf->cpu__DOT__zr))
-                                : ((1U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
+                                : ((1U & (IData)(__Vfunc_cpu__DOT__getReg__30__id))
                                     ? (IData)(vlSelf->cpu__DOT__yr)
                                     : (IData)(vlSelf->cpu__DOT__xr)))
-                            : ((2U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
-                                ? ((1U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
+                            : ((2U & (IData)(__Vfunc_cpu__DOT__getReg__30__id))
+                                ? ((1U & (IData)(__Vfunc_cpu__DOT__getReg__30__id))
                                     ? (IData)(vlSelf->cpu__DOT__pr)
                                     : (IData)(vlSelf->cpu__DOT__cr))
-                                : ((1U & (IData)(__Vfunc_cpu__DOT__getReg__29__id))
+                                : ((1U & (IData)(__Vfunc_cpu__DOT__getReg__30__id))
                                     ? (IData)(vlSelf->cpu__DOT__br)
                                     : (IData)(vlSelf->cpu__DOT__ar)))));
-                vlSelf->cpu__DOT__ar = __Vfunc_cpu__DOT__getReg__29__Vfuncout;
+                vlSelf->cpu__DOT__ar = __Vfunc_cpu__DOT__getReg__30__Vfuncout;
             }
             vlSelf->ix = 1U;
         }
