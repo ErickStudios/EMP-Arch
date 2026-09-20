@@ -482,6 +482,9 @@ export function LineDisasm(bytes, context=null) {
       if(hi===0) return `TSA ${reg}`
       if(hi===1) return `MVA ${reg}`
       break
+    case 0x01:
+      if (hi == 0) return `CP${regName(lo)}`
+      break;
     case 0x02:
       if((hi & 0xC) === 0x0) return `ZR${flagName(lo)}`
       if((hi & 0xC) === 0x1) return `ST${flagName(lo)}`
@@ -508,7 +511,6 @@ export function LineDisasm(bytes, context=null) {
     case 0x08:
       return `BRC ${reg}`
 
-    // 1 arg numérico $n
     case 0x04: return `PAG $${arg.toString(16).toUpperCase()}`
     case 0x10: return `PG2 $${arg.toString(16).toUpperCase()}`
     case 0x11: return `PG3 $${arg.toString(16).toUpperCase()}`

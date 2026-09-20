@@ -746,6 +746,9 @@ function LineDisasm(bytes, context = null) {
       if (hi === 0) return `TSA ${reg}`;
       if (hi === 1) return `MVA ${reg}`;
       break;
+    case 1:
+      if (hi == 0) return `CP${regName(lo)}`;
+      break;
     case 2:
       if ((hi & 12) === 0) return `ZR${flagName(lo)}`;
       if ((hi & 12) === 1) return `ST${flagName(lo)}`;
@@ -771,7 +774,6 @@ function LineDisasm(bytes, context = null) {
       break;
     case 8:
       return `BRC ${reg}`;
-    // 1 arg numérico $n
     case 4:
       return `PAG $${arg.toString(16).toUpperCase()}`;
     case 16:
