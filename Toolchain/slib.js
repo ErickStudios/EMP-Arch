@@ -92,6 +92,7 @@ export class Context {
         this.currentLabel = 'start';
         this.result = [];
         this.list = {};
+        this.instr_assumes = new Map();
         this.org = 0;
     }
 }
@@ -182,6 +183,9 @@ export function LineAsm(line, context) {
         if (nam == 'CHB') {
             return [0x09, 'n'];
         }
+        if (nam == 'TWI') {
+            return [0x12, 'n'];
+        }
         if (nam == 'CHZ') {
             return [0x0E, 'n'];
         }
@@ -227,7 +231,7 @@ export function LineAsm(line, context) {
     function parseStructured(str, bd=8) {
         return str.map(v => {
             if (Array.isArray(v)) {
-			let bs = parseStructured(v,bd/2);
+			    let bs = parseStructured(v,bd/2);
                 let ata = 0;
                 bs.forEach(c => {
                     ata = (ata << (bd/2)) | Number(c);
@@ -391,6 +395,34 @@ export function LineAsm(line, context) {
             ));
             }
             result.push(...primarys);
+        }
+        else if (peek().value.toUpperCase() === 'DEF') {
+            consume();
+            let nam = consume().value.toUpperCase();
+            function arrayParse() {
+                let arr = [];
+                while (peek() && peek().value !== ')') {
+                    if (peek().value == '(') {
+                        consume();
+                        arr.push(arrayParse());
+                    }
+                    else if (peek().type === 'number') {
+                        arr.push(consume().value);
+                    }
+                    else {
+                        arr.push(consume().value.toLowerCase());
+                    }
+                }
+                return arr;
+            }
+            expect('(', 'expected exp');
+            context.instr_assumes.set(nam, arrayParse());
+        }
+        else if (context.instr_assumes.has(peek().value.toUpperCase())) {
+            let al = consume().value.toUpperCase();
+            let opr = context.instr_assumes.get(al);
+            let pr = parseStructured(opr);
+            result.push(...pr);
         }
         else if (peek().value.toUpperCase() === 'LOCAL') {
             consume();

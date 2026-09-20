@@ -12,7 +12,12 @@ module cpu #(
     input              rst,
     output reg         ix,
     output reg         jf,
-    output reg         ir
+    output reg         ir,
+    input              rg,
+    output reg  [7:0]  rgt,
+    input       [3:0]  rid,
+    input              rs,
+    input       [7:0]  rsv
 );
 
 // registers
@@ -83,17 +88,25 @@ begin
             alt2r = val;
         end
     end
+    default: ;
     endcase
 end
 endtask
 
 always @(posedge clk or posedge rst) begin
+    if (rg) begin
+        rgt = getReg(rid);
+    end
+    if (rs) begin
+        setRegister(rid, rsv);
+    end
+
     if (rst) begin
-        ar  <= 8'h00;
-        br  <= 8'h00;
-        cr  <= 8'h00;
-        pr  <= 8'h00;
-        fr  <= 8'h00;
+        ar  = 8'h00;
+        br  = 8'h00;
+        cr  = 8'h00;
+        pr  = 8'h00;
+        fr  = 8'h00;
         rex <= 1'b0;
         wex <= 1'b0;
         adr <= 16'h0000;
@@ -110,8 +123,8 @@ always @(posedge clk or posedge rst) begin
     
         if (ir == 1) begin
             ir <= 0;
-            if (b_rec) br  <= rvx;
-            else ar  <= rvx;
+            if (b_rec) br = rvx;
+            else ar  = rvx;
             ix <= 1'b0;
         end
         else begin
@@ -121,7 +134,6 @@ always @(posedge clk or posedge rst) begin
                     ix <= 1'b1;
                     if (ins[7:4] == 4'h0) begin
                         tr = ar - getReg(reg_r);
-                        //$display(tr, ar, getReg(reg_r));
                         fr[1] = 0;
                         if (tr == 0) begin 
                             fr[1] = 1;
@@ -141,7 +153,7 @@ always @(posedge clk or posedge rst) begin
                         end
                     end
                     else if (ins[7:4] == 4'h1) begin
-                        ar <= getReg(reg_r);
+                        ar = getReg(reg_r);
                     end
                 end
 
@@ -154,9 +166,9 @@ always @(posedge clk or posedge rst) begin
                 // 02 00: ZRf/STf (fF = 0/1)
                 8'h02: begin
                     if (ins[7:4] == 8'h0) 
-                        fr[reg_r] <= 1'b0; // ZRf
+                        fr[reg_r] = 1'b0; // ZRf
                     else if (ins[7:4] == 8'h1) 
-                        fr[reg_r] <= 1'b1; // STf
+                        fr[reg_r] = 1'b1; // STf
                     ix <= 1'b1;
                 end
 
@@ -165,45 +177,45 @@ always @(posedge clk or posedge rst) begin
                     // 03 0r: ADC r (a = a + r + CF)
                     if (ins[7:4] == 4'h0) begin
                         ofr = ar + getReg(reg_r) + {7'b0, rcf};
-                        ar <= ofr[7:0];
+                        ar = ofr[7:0];
                         fr[5] = ofr[8];
                         ix <= 1'b1;
                     end
                     // 03 1r: SBB r (a = a - r + CF)
                     else if (ins[7:4] == 4'h1) begin
-                        ar <= ar - getReg(reg_r) + {7'b0, rcf};
+                        ar = ar - getReg(reg_r) + {7'b0, rcf};
                         ix <= 1'b1;
                     end
                     // 03 2r: SHR r (a = a >> r)
                     else if (ins[7:4] == 4'h2) begin
-                        ar <= ar >> getReg(reg_r);
+                        ar = ar >> getReg(reg_r);
                         ix <= 1'b1;
                     end
                     // 03 3r: SHL r (a = a << r)
                     else if (ins[7:4] == 4'h3) begin
-                        ar <= ar << getReg(reg_r);
+                        ar = ar << getReg(reg_r);
                         ix <= 1'b1;
                     end
                     // 03 4r: AND r (a = a & r)
                     else if (ins[7:4] == 4'h4) begin
-                        ar <= ar & getReg(reg_r);
+                        ar = ar & getReg(reg_r);
                         ix <= 1'b1;
                     end
                     // 03 5r: ORB r (a = a | r)
                     else if (ins[7:4] == 4'h5) begin
-                        ar <= ar | getReg(reg_r);
+                        ar = ar | getReg(reg_r);
                         ix <= 1'b1;
                     end
                     // 03 6r: MUL r (a = a * r)
                     else if (ins[7:4] == 4'h6 && MODEL_TYPE >= 1028) begin
-                        ar <= ar * getReg(reg_r);
+                        ar = ar * getReg(reg_r);
                         ix <= 1'b1;
                     end
                 end
 
                 // 04 VV: PAG $VV (page = 0xVV)
                 8'h04: begin
-                    pr <= imm_vv;
+                    pr = imm_vv;
                     ix <= 1'b1;
                 end
 
@@ -232,7 +244,7 @@ always @(posedge clk or posedge rst) begin
                 // 06 1r: CHA v (a = v)
                 8'h06: begin
                     ix <= 1'b1;
-                    ar <= imm_vv;
+                    ar = imm_vv;
                 end
 
                 // 07 VV: LDC $VV
@@ -253,7 +265,7 @@ always @(posedge clk or posedge rst) begin
                 // 09 1r: CHB v (b = v)
                 8'h09: begin
                     ix <= 1'b1;
-                    br <= imm_vv;
+                    br = imm_vv;
                 end
 
                 // 0a 0r: CTA $$V ([page:$VV] = a)
@@ -283,13 +295,13 @@ always @(posedge clk or posedge rst) begin
                 // 0D 1r: CHC v (c = v)
                 8'h0d: begin
                     ix <= 1'b1;
-                    cr <= imm_vv;
+                    cr = imm_vv;
                 end
 
                 // 0E VV: CHZ v (z = v)
                 8'h0e: begin
                     ix <= 1'b1;
-                    zr <= imm_vv;
+                    zr = imm_vv;
                 end
 
                 8'h0F: begin
@@ -339,7 +351,7 @@ always @(posedge clk or posedge rst) begin
                 8'h10: begin
                     if (MODEL_TYPE >= 1000) begin
                         ix <= 1'b1;
-                        altpr <= imm_vv;
+                        altpr = imm_vv;
                     end
                 end
 
@@ -347,7 +359,31 @@ always @(posedge clk or posedge rst) begin
                 8'h11: begin
                     if (MODEL_TYPE >= 1000) begin
                         ix <= 1'b1;
-                        alt2r <= imm_vv;
+                        alt2r = imm_vv;
+                    end
+                end
+
+                // 12 VV: TWI $VV = a test $vv
+                8'h12: begin
+                    if (MODEL_TYPE >= 1028) begin
+                        tr = ar - imm_vv;
+                        fr[1] = 0;
+                        if (tr == 0) begin 
+                            fr[1] = 1;
+                            fr[4] = 0;
+                        end
+                        else begin
+                            fr[1] = 0;
+                            fr[4] = 1;
+                        end
+                        if (tr[7] == 1) begin 
+                            fr[2] = 1;
+                            fr[3] = 0;
+                        end
+                        else begin
+                            fr[2] = 0;
+                            fr[3] = 1;
+                        end
                     end
                 end
 
