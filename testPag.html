@@ -1,0 +1,23 @@
+<html>
+<head>
+    <title>Emu0</title>
+</head>
+<body>
+    <script type="module">
+        import * as emp from "./Toolchain/libemp.js"
+
+        let cpu = new emp.cpuGen1();
+
+        cpu.wex = (adr, val) => {
+            console.log('write', adr, 'to', val);
+        }
+        cpu.rex = (adr) => {
+            console.log('read', adr);
+            return 0;
+        }
+
+        console.log(emp.compiler.inspect(cpu.exi(0x400)));
+
+    </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 
 // Generation 1 of EMP
-class cpuGen1 {
+export class cpuGen1 {
     constructor(model=1028) {
         this.model = model;
         this.def();
@@ -292,5 +292,6 @@ class cpuGen1 {
                 this.hlp(ins, opcode, imm_vv, imm_nibl, reg_r);
                 break;
         }
+        return [opcode, imm_vv];
     }
 }

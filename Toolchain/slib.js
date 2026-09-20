@@ -542,3 +542,9 @@ export function parseAsm(code) {
     })
     return ctx;
 }
+
+export var compiler = {
+    make: parseAsm,
+    info: Context,
+    inspect: LineDisasm
+}
