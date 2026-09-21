@@ -114,8 +114,8 @@ var cpuGen1 = class {
             this.fr[4] = 1;
           }
           if (this.tr < 0) {
-            fr[2] = 1;
-            fr[3] = 0;
+            this.fr[2] = 1;
+            this.fr[3] = 0;
           } else {
             this.fr[2] = 0;
             this.fr[3] = 1;
