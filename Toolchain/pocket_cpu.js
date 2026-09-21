@@ -280,7 +280,7 @@ export class cpuGen1 {
                     }
                     else {
                         this.fr[2] = 0;
-                        this.fr[3] = 0;
+                        this.fr[3] = 1;
                     }
                 }
                 break;

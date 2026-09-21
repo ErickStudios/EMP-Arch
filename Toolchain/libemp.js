@@ -278,7 +278,7 @@ var cpuGen1 = class {
             this.fr[3] = 0;
           } else {
             this.fr[2] = 0;
-            this.fr[3] = 0;
+            this.fr[3] = 1;
           }
         }
         break;
