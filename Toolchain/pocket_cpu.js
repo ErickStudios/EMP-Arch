@@ -368,11 +368,15 @@ export class cpuGen2 {
             }
             // LDR $XXYYh, %I
             else if (this.actx == 0b001) {
-                this.setRegister(this.rdst, this.rex(this.i16 + this.getRegister(this.ridx)));
+                let adr = this.i16 + this.getRegister(this.ridx);
+                this.setRegister(this.rdst, (this.rex(adr) << 8) | this.rex(adr+1));
             }
             // STR $XXYYh, %I
             else if (this.actx == 0b010) {
-                this.wex(this.i16 + this.getRegister(this.ridx), this.getRegister(this.rdst));
+                let adr = this.i16 + this.getRegister(this.ridx);
+                let val = this.getRegister(this.rdst)
+                this.wex(adr, (val >> 8) & 0xFF);
+                this.wex(adr+1, val & 0xFF);
             }
             // LBR $XXYYh, %I
             else if (this.actx == 0b100) {

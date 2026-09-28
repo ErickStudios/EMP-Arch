@@ -388,9 +388,13 @@ var cpuGen2 = class {
       if (this.actx == 0) {
         this.ar = this.operate(this.oper, this.ar, this.i16);
       } else if (this.actx == 1) {
-        this.setRegister(this.rdst, this.rex(this.i16 + this.getRegister(this.ridx)));
+        let adr = this.i16 + this.getRegister(this.ridx);
+        this.setRegister(this.rdst, this.rex(adr) << 8 | this.rex(adr + 1));
       } else if (this.actx == 2) {
-        this.wex(this.i16 + this.getRegister(this.ridx), this.getRegister(this.rdst));
+        let adr = this.i16 + this.getRegister(this.ridx);
+        let val = this.getRegister(this.rdst);
+        this.wex(adr, val >> 8 & 255);
+        this.wex(adr + 1, val & 255);
       } else if (this.actx == 4) {
         this.setRegister(this.rdst, this.rex(this.i16 + this.getRegister(this.ridx)) & 255);
       } else if (this.actx == 5) {
