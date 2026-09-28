@@ -397,10 +397,10 @@ var cpuGen2 = class {
         this.wex(this.i16 + this.getRegister(this.ridx), this.getRegister(this.rdst) & 255);
       } else if (this.actx == 3) {
         if (this.subg == 0) {
-          this.jf(i16);
+          this.jf(this.i16);
         } else if (this.subg == 1) {
           if (this.flags[0]) {
-            this.jf(i16);
+            this.jf(this.i16);
           }
         }
       } else if (this.actx == 6) {
@@ -416,10 +416,10 @@ var cpuGen2 = class {
         this.setRegister(this.ropr1, this.operate(this.oper, this.getRegister(this.ropr1), this.getRegister(this.ropr2)));
       } else if (this.actx == 1) {
         if (this.subg == 0) {
-          this.jf(i16);
+          this.jf(this.i16);
         } else if (this.subg == 1) {
           if (this.flags[0]) {
-            this.jf(i16);
+            this.jf(this.i16);
           }
         }
       } else if (this.actx == 2) {
@@ -1392,8 +1392,8 @@ function LineDisasm2(bytes, context = null) {
   const rus = b1 & 3;
   const rName = (n) => ["A", "X", "Y", "Z"][n] || `R${n}`;
   const opName = (o) => ["ADD", "SUB", "MUL", "DIV", "XOR", "OR", "AND", "SHR", "SHL"][o] || `OP${o}`;
-  const i162 = b1 << 8 | b2;
-  const i16h = `$${i162.toString(16).padStart(4, "0").toUpperCase()}h`;
+  const i16 = b1 << 8 | b2;
+  const i16h = `$${i16.toString(16).padStart(4, "0").toUpperCase()}h`;
   if (!lenx) {
     switch (actx) {
       case 0:

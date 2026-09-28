@@ -386,12 +386,12 @@ export class cpuGen2 {
             else if (this.actx == 0b011) {
                 // JMP $XXYYh
                 if (this.subg == 0) {
-                    this.jf(i16);
+                    this.jf(this.i16);
                 }
                 // BCF $XXYYh
                 else if (this.subg == 1) {
                     if (this.flags[0]) {
-                        this.jf(i16);
+                        this.jf(this.i16);
                     }
                 }
             }
@@ -416,12 +416,12 @@ export class cpuGen2 {
             else if (this.actx == 0b001) {
                 // JMP %R
                 if (this.subg == 0) {
-                    this.jf(i16);
+                    this.jf(this.i16);
                 }
                 // BCF %R
                 else if (this.subg == 1) {
                     if (this.flags[0]) {
-                        this.jf(i16);
+                        this.jf(this.i16);
                     }
                 }
             }
