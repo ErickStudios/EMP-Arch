@@ -1,3 +1,9 @@
+var __defProp = Object.defineProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+
 // Toolchain/pocket_cpu.js
 var cpuGen1 = class {
   constructor(model = 1028) {
@@ -291,6 +297,144 @@ var cpuGen1 = class {
         break;
     }
     return [opcode, imm_vv];
+  }
+};
+var cpuGen2 = class {
+  constructor() {
+    this.crt();
+  }
+  crt() {
+    this.ar = 0;
+    this.xr = 0;
+    this.yr = 0;
+    this.tmp = 0;
+    this.zr = 0;
+    this.flags = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  }
+  rst() {
+    this.crt();
+  }
+  nwi(ins) {
+    this.lenx = ins >> 23 & 1;
+    this.actx = ins >> 20 & 7;
+    this.subg = ins >> 16 & 15;
+    this.rdst = this.subg >> 2 & 3;
+    this.ridx = this.subg & 3;
+    this.sbac = this.rdst;
+    this.rop = this.ridx;
+    this.i16 = ins & 65535;
+    this.i8 = this.i16 >> 8 & 255;
+    this.ropr1 = ins >> 12 & 3;
+    this.ropr2 = ins >> 8 & 3;
+    this.rus = this.ropr2;
+    this.oper = this.subg & 15;
+  }
+  operate(opid, opr1, opr2) {
+    switch (opid) {
+      case 0:
+        return opr1 + opr2;
+      case 1:
+        return opr1 - opr2;
+      case 2:
+        return opr1 * opr2;
+      case 3:
+        return opr1 / opr2;
+      case 4:
+        return opr1 ^ opr2;
+      case 5:
+        return opr1 | opr2;
+      case 6:
+        return opr1 & opr2;
+      case 7:
+        return opr1 >> opr2;
+      case 8:
+        return opr1 << opr2;
+      default:
+        return 0;
+    }
+  }
+  setRegister(rid, val) {
+    switch (rid) {
+      case 0:
+        this.ar = val;
+        break;
+      case 1:
+        this.xr = val;
+        break;
+      case 2:
+        this.yr = val;
+        break;
+      default:
+        break;
+    }
+  }
+  getRegister(rid) {
+    switch (rid) {
+      case 0:
+        return this.ar;
+      case 1:
+        return this.xr;
+      case 2:
+        return this.yr;
+      case 3:
+        return 0;
+      default:
+        return 0;
+    }
+  }
+  exi(ins) {
+    this.nwi(ins);
+    if (this.lenx) {
+      if (this.actx == 0) {
+        this.ar = this.operate(this.oper, this.ar, this.i16);
+      } else if (this.actx == 1) {
+        this.setRegister(this.rdst, this.rex(this.i16 + this.getRegister(this.ridx)));
+      } else if (this.actx == 2) {
+        this.wex(this.i16 + this.getRegister(this.ridx), this.getRegister(this.rdst));
+      } else if (this.actx == 4) {
+        this.setRegister(this.rdst, this.rex(this.i16 + this.getRegister(this.ridx)) & 255);
+      } else if (this.actx == 5) {
+        this.wex(this.i16 + this.getRegister(this.ridx), this.getRegister(this.rdst) & 255);
+      } else if (this.actx == 3) {
+        if (this.subg == 0) {
+          this.jf(i16);
+        } else if (this.subg == 1) {
+          if (this.flags[0]) {
+            this.jf(i16);
+          }
+        }
+      } else if (this.actx == 6) {
+        this.setRegister(this.ridx, this.i16);
+      } else if (this.actx == 7) {
+        this.tmp = this.getRegister(this.ridx) - this.i16;
+        this.flags[1] = Number(this.tmp == 0);
+        this.flags[2] = Number((this.tmp & 32768) != 0);
+        this.flags[3] = Number(tmp != 0 && (this.tmp & 32768) == 0);
+      }
+    } else {
+      if (this.actx == 0) {
+        this.setRegister(this.ropr1, this.operate(this.oper, this.getRegister(this.ropr1), this.getRegister(this.ropr2)));
+      } else if (this.actx == 1) {
+        if (this.subg == 0) {
+          this.jf(i16);
+        } else if (this.subg == 1) {
+          if (this.flags[0]) {
+            this.jf(i16);
+          }
+        }
+      } else if (this.actx == 2) {
+        if (this.sbac == 0) {
+          this.tmp = this.getRegister(this.ridx) - this.getRegister(this.rus);
+          this.flags[1] = Number(this.tmp == 0);
+          this.flags[2] = Number((this.tmp & 32768) != 0);
+          this.flags[3] = Number(tmp != 0 && (this.tmp & 32768) == 0);
+        } else if (this.sbac == 1) {
+          if (this.rop == 0) {
+            this.flags[0] = this.flags[i8];
+          }
+        }
+      }
+    }
   }
 };
 
@@ -825,11 +969,494 @@ var compiler = {
   info: Context,
   inspect: LineDisasm
 };
+
+// Toolchain/gen2lib.js
+var gen2lib_exports = {};
+__export(gen2lib_exports, {
+  Context: () => Context2,
+  LineAsm: () => LineAsm2,
+  LineDisasm: () => LineDisasm2,
+  compiler: () => compiler2,
+  parseAsm: () => parseAsm2
+});
+function tokenize2(code) {
+  const tokens = [];
+  let i = 0;
+  const isLetter = (c) => /[a-zA-Z_]/.test(c);
+  const isNumber = (c) => /[0-9]/.test(c);
+  while (i < code.length) {
+    let c = code[i];
+    if (/\s/.test(c)) {
+      i++;
+      continue;
+    }
+    if (c === "/" && code[i + 1] === "/") {
+      while (i < code.length && code[i] !== "\n") {
+        i++;
+      }
+      continue;
+    }
+    if (c === "'") {
+      let quoteType = c;
+      let value = "";
+      i++;
+      while (i < code.length && code[i] !== quoteType) {
+        value += code[i++];
+      }
+      i++;
+      for (let a = 0; a < value.length; a++) {
+        tokens.push({ type: "number", value: value.charCodeAt(a) });
+        if (a !== value.length - 1) {
+          tokens.push({ type: "symbol", value: "," });
+        }
+      }
+      continue;
+    }
+    if (isLetter(c)) {
+      let value = "";
+      while (i < code.length && (isLetter(code[i]) || isNumber(code[i]))) {
+        value += code[i++];
+      }
+      tokens.push({ type: "identifier", value });
+      continue;
+    }
+    if (isNumber(c)) {
+      let value = "";
+      while (i < code.length && (isNumber(code[i]) || "ABCDEFabcdef".includes(code[i]))) {
+        value += code[i++];
+      }
+      if (i < code.length && code[i].toLowerCase() === "h") {
+        i++;
+        value = parseInt(value, 16);
+      } else if (value === "0" && code[i] === "x") {
+        i++;
+        let value2 = "";
+        while (i < code.length && (isNumber(code[i]) || ["A", "B", "C", "D", "E", "F"].includes(code[i].toUpperCase()))) {
+          value2 += code[i++];
+        }
+        value = parseInt(value2, 16);
+      } else {
+        value = Number(value);
+      }
+      tokens.push({
+        type: "number",
+        value
+      });
+      continue;
+    }
+    tokens.push({ type: "symbol", value: c });
+    i++;
+  }
+  return tokens;
+}
+var Context2 = class {
+  constructor() {
+    this.symbs = /* @__PURE__ */ new Map();
+    this.equals = /* @__PURE__ */ new Map();
+    this.codeLen = 0;
+    this.currentIp = 0;
+    this.currentLabel = "start";
+    this.result = [];
+    this.list = {};
+    this.instr_assumes = /* @__PURE__ */ new Map();
+    this.org = 0;
+  }
+};
+function LineAsm2(line, context) {
+  let toks = tokenize2(line);
+  let i = 0;
+  function peek() {
+    return toks[i];
+  }
+  function consume() {
+    return toks[i++];
+  }
+  function expect(x, msg) {
+    let a = consume();
+    if (a.value != x) {
+      throw new Error(msg);
+    }
+    return a;
+  }
+  function getRegOf(name) {
+    return { A: 0, X: 1, Y: 2, ZERO: 3, Z: 3 }[name.toUpperCase()];
+  }
+  function getFlagOf(name) {
+    return { C: 0, D: 6 }[name.toUpperCase()];
+  }
+  function getOperatorOf(name) {
+    return { ADD: 0, SUB: 1, MUL: 2, DIV: 3, XOR: 4, OR: 5, AND: 6, SHL: 7, SHR: 8 }[name.toUpperCase()];
+  }
+  function getOpcodeOf(name) {
+    let nam = name.toUpperCase();
+    if (nam == "LCF") {
+      return [[2, 4], "n"];
+    }
+    if (nam.startsWith("LD") && nam.length == 3) {
+      return [[9, [getRegOf(nam[2]), "r"]], "n16"];
+    }
+    if (nam.startsWith("ST") && nam.length == 3) {
+      return [[10, [getRegOf(nam[2]), "r"]], "n16"];
+    }
+    if (nam.startsWith("TI") && nam.length == 3) {
+      return [[15, [0, getRegOf(nam[2])]], "n16"];
+    }
+    if (nam.startsWith("TS") && nam.length == 3) {
+      return [[2, [0, getRegOf(nam[2])]], "r"];
+    }
+    if (nam.startsWith("LB") && nam.length == 3) {
+      return [[12, [getRegOf(nam[2]), "r"]], "n16"];
+    }
+    if (nam.startsWith("SB") && nam.length == 3) {
+      return [[13, [getRegOf(nam[2]), "r"]], "n16"];
+    }
+    if (nam == "JMP") {
+      let a = i;
+      consume();
+      let flg = false;
+      if (peek().value === "$") {
+        flg = true;
+      }
+      i = a;
+      if (flg) {
+        return [[11, 0], "n16"];
+      } else {
+        return [[1, 0], ["r"]];
+      }
+    }
+    if (nam == "BCF") {
+      let a = i;
+      consume();
+      let flg = false;
+      if (peek().value === "$") {
+        flg = true;
+      }
+      i = a;
+      if (flg) {
+        return [[11, 0], "n16"];
+      } else {
+        return [[1, 1], ["r"]];
+      }
+    }
+    if (getOperatorOf(name) !== void 0) {
+      let a = i;
+      consume();
+      let flg = false;
+      if (peek().value === "$") {
+        flg = true;
+      }
+      i = a;
+      if (flg) {
+        return [[8, getOperatorOf(name)], "n16"];
+      } else {
+        return [[0, getOperatorOf(name)], ["r", "r"]];
+      }
+    }
+    return null;
+  }
+  function toBigEndianBytes(n, x) {
+    if (n == 0) {
+      return new Array(x).fill(0);
+    }
+    let bytes = [];
+    while (n > 0) {
+      bytes.push(n & 255);
+      n = n >>> 8;
+    }
+    bytes.reverse();
+    while (bytes.length < x) {
+      bytes.unshift(0);
+    }
+    return bytes;
+  }
+  function parseStructured(str, bd = 8) {
+    return str.map((v) => {
+      if (Array.isArray(v)) {
+        let bs = parseStructured(v, bd / 2);
+        let ata = 0;
+        bs.forEach((c) => {
+          ata = ata << bd / 2 | Number(c);
+        });
+        return ata;
+      } else if (v == "n") {
+        expect("$", "expected number");
+        if (peek().type != "number") {
+          let inf = {};
+          let na = parseSyntx(inf);
+          if (inf.label) na += context.org;
+          if (peek() && peek().value == ".") {
+            consume();
+            let pat = consume().value.toUpperCase();
+            if (pat == "H") {
+              return na >> 8 & 255;
+            } else if (pat == "L") {
+              return na & 255;
+            }
+          }
+          return na;
+        }
+        return Number(consume().value);
+      } else if (v == "n16") {
+        expect("$", "expected number");
+        if (peek().type != "number") {
+          let inf = {};
+          let na = parseSyntx(inf);
+          if (inf.label) na += context.org;
+          return toBigEndianBytes(na, 2);
+        }
+        return toBigEndianBytes(Number(consume().value), 2);
+      } else if (v == "r") {
+        expect("%", "expected register");
+        return Number(getRegOf(consume().value));
+      }
+      return Number(v);
+    }).flat();
+  }
+  function parseSize(name) {
+    switch (name) {
+      case "db":
+        return 1;
+      case "dw":
+        return 2;
+      case "dd":
+        return 4;
+      case "dq":
+        return 8;
+      case "byte":
+        return 1;
+      case "word":
+        return 2;
+    }
+  }
+  function parseSyntx(info = {}) {
+    info.label = false;
+    if (peek().value == "(") {
+      consume();
+      let infa = {};
+      let result2 = parseSyntx(infa);
+      if (infa.label) result2 += context.org;
+      let steps = [result2];
+      while (peek() && peek().value != ")") {
+        if (peek().value !== ")") {
+          let xc = consume().value;
+          steps.push(xc);
+          if (xc == "+") {
+            let fomi = {};
+            let ra = parseSyntx(fomi);
+            steps.push(ra);
+            result2 = result2 + ra;
+          } else if (xc == "-") {
+            let fomi = {};
+            let ra = parseSyntx(fomi);
+            steps.push(ra);
+            result2 = result2 - ra;
+          } else if (xc == "*") {
+            let fomi = {};
+            let ra = parseSyntx(fomi);
+            steps.push(ra);
+            result2 = result2 * ra;
+          } else if (xc == "/") {
+            let fomi = {};
+            let ra = parseSyntx(fomi);
+            steps.push(ra);
+            result2 = result2 / ra;
+          }
+        }
+      }
+      consume();
+      return result2;
+    }
+    if (peek().type == "number") return consume().value;
+    if (peek().value == ".") {
+      consume();
+      info.label = true;
+      return context.symbs.get(context.currentLabel + "." + consume().value);
+    }
+    if (context.equals.has(peek().value)) {
+      return context.equals.get(consume().value);
+    }
+    if (peek().value == "$") {
+      consume();
+      info.label = true;
+      return context.currentIp;
+    }
+    if (peek().value == "offs8") {
+      consume();
+      let syn = parseSyntx();
+      syn = syn - context.currentIp;
+      if (syn < 0) {
+        syn = 128 | -syn;
+      }
+      return syn & 255;
+    }
+    if (context.symbs.has(peek().value)) {
+      info.label = true;
+      return context.symbs.get(consume().value);
+    }
+    if (peek().type !== "number") {
+      consume();
+      return 0;
+    }
+    return consume().value;
+  }
+  let result = [];
+  while (i < toks.length) {
+    if (getOpcodeOf(peek().value) !== null) {
+      let opr = getOpcodeOf(peek().value);
+      consume();
+      let pr = parseStructured(opr);
+      result.push(...pr);
+    } else if (peek().value == ";") return result;
+    else if (parseSize(peek().value.toLowerCase()) !== void 0) {
+      let sizeof = parseSize(consume().value.toLowerCase());
+      let primarys = toBigEndianBytes(parseSyntx(), sizeof);
+      while (peek() && peek().value === ",") {
+        consume();
+        primarys.push(...toBigEndianBytes(
+          parseSyntx(),
+          sizeof
+        ));
+      }
+      result.push(...primarys);
+    } else if (peek().value.toUpperCase() === "DEF") {
+      let arrayParse = function() {
+        let arr = [];
+        while (peek() && peek().value !== ")") {
+          if (peek().value == "(") {
+            consume();
+            arr.push(arrayParse());
+          } else if (peek().type === "number") {
+            arr.push(consume().value);
+          } else {
+            arr.push(consume().value.toLowerCase());
+          }
+        }
+        return arr;
+      };
+      consume();
+      let nam = consume().value.toUpperCase();
+      expect("(", "expected exp");
+      context.instr_assumes.set(nam, arrayParse());
+    } else if (context.instr_assumes.has(peek().value.toUpperCase())) {
+      let al = consume().value.toUpperCase();
+      let opr = context.instr_assumes.get(al);
+      let pr = parseStructured(opr);
+      result.push(...pr);
+    } else if (peek().value.toUpperCase() === "LOCAL") {
+      consume();
+      context.org = parseSyntx();
+    } else if (peek().value.toUpperCase() == "RESERVE" || peek().value.toUpperCase() == "RSV") {
+      consume();
+      let sx = parseSyntx();
+      result.push(...new Array(sx).fill(0));
+    } else if (peek().value == ".") {
+      consume();
+      let ident = consume().value;
+      expect(":");
+      context.symbs.set(context.currentLabel + "." + ident, context.currentIp);
+    } else if (peek().type == "identifier") {
+      let ident = consume().value;
+      if (peek().value.toUpperCase() == "EQU") {
+        consume();
+        context.equals.set(ident, parseSyntx());
+      } else if (parseSize(peek().value.toLowerCase()) !== void 0) {
+        context.symbs.set(ident, context.currentIp);
+      } else {
+        expect(":");
+        context.currentLabel = ident;
+        context.symbs.set(ident, context.currentIp);
+      }
+    } else {
+      consume();
+    }
+  }
+  return result;
+}
+function LineDisasm2(bytes, context = null) {
+  if (!bytes || bytes.length == 0) return "";
+  if (bytes.length == 1) return `DB $${bytes[0].toString(16).padStart(2, "0").toUpperCase()}`;
+  const b0 = bytes[0];
+  const b1 = bytes[1];
+  const b2 = bytes[2] || 0;
+  const lenx = b0 >> 7 & 1;
+  const actx = b0 >> 4 & 7;
+  const subg = b0 & 15;
+  const rdst = subg >> 2 & 3;
+  const ridx = subg & 3;
+  const ropr1 = b1 >> 4 & 3;
+  const ropr2 = b1 & 3;
+  const rus = b1 & 3;
+  const rName = (n) => ["A", "X", "Y", "Z"][n] || `R${n}`;
+  const opName = (o) => ["ADD", "SUB", "MUL", "DIV", "XOR", "OR", "AND", "SHR", "SHL"][o] || `OP${o}`;
+  const i162 = b1 << 8 | b2;
+  const i16h = `$${i162.toString(16).padStart(4, "0").toUpperCase()}h`;
+  if (!lenx) {
+    switch (actx) {
+      case 0:
+        return `${opName(subg)} %${rName(ropr1)}, %${rName(ropr2)}`;
+      case 1:
+        if (subg == 0) return `JMP %${rName(rus)}`;
+        if (subg == 1) return `BCF %${rName(rus)}`;
+        break;
+      case 2:
+        if (subg >> 2 == 0) return `TS${rName(ridx)} %${rName(rus)}`;
+        if (subg == 4) return `LCF $${b1.toString(16).toUpperCase()}`;
+        break;
+    }
+    return `DB $${b0.toString(16).padStart(2, "0")} $${b1.toString(16).padStart(2, "0")}`;
+  }
+  switch (actx) {
+    case 0:
+      return `${opName(subg)} %A ${i16h}`;
+    case 1:
+      return `LD${rName(rdst)} %${rName(ridx)} ${i16h}`;
+    case 2:
+      return `ST${rName(rdst)} %${rName(ridx)} ${i16h}`;
+    case 4:
+      return `LB${rName(rdst)} %${rName(ridx)} ${i16h}`;
+    case 5:
+      return `SB${rName(rdst)} %${rName(ridx)} ${i16h}`;
+    case 3:
+      if (subg == 0) return `JMP ${i16h}`;
+      if (subg == 1) return `BCF ${i16h}`;
+      break;
+    case 6:
+      return `CH${rName(ridx)} $${i16h}`;
+    case 7: {
+      return `TI${rName(ridx)} ${i16h}`;
+    }
+  }
+  return `DB $${b0.toString(16).padStart(2, "0")} $${b1.toString(16).padStart(2, "0")} $${b2.toString(16).padStart(2, "0")}`;
+}
+function parseAsm2(code) {
+  let ctx = new Context2();
+  let lines = code.split("\n");
+  lines.forEach((line) => {
+    let instr = LineAsm2(line, ctx);
+    ctx.currentIp += instr.length;
+  });
+  ctx.currentIp = 0;
+  lines.forEach((line) => {
+    let instr = LineAsm2(line, ctx);
+    ctx.result.push(...instr);
+    if (!ctx.list[ctx.currentIp]) ctx.list[ctx.currentIp] = [];
+    ctx.list[ctx.currentIp].push({ instr, line });
+    ctx.currentIp += instr.length;
+  });
+  return ctx;
+}
+var compiler2 = {
+  make: parseAsm2,
+  info: Context2,
+  inspect: LineDisasm2
+};
 export {
   Context,
   LineAsm,
   LineDisasm,
   compiler,
   cpuGen1,
+  cpuGen2,
+  gen2lib_exports as g2asm,
   parseAsm
 };

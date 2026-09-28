@@ -295,3 +295,155 @@ export class cpuGen1 {
         return [opcode, imm_vv];
     }
 }
+
+// Generation 2 of EMP
+export class cpuGen2 {
+    constructor() {
+        this.crt();
+    }
+    crt() {
+        this.ar = 0;
+        this.xr = 0;
+        this.yr = 0;
+        this.tmp = 0;
+        this.zr = 0;
+        this.flags = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+    }
+    rst() {
+        this.crt()
+    }
+    nwi(ins) {
+        this.lenx = (ins >> 23) & 0b1;
+        this.actx = (ins >> 20) & 0b111;
+        this.subg = (ins >> 16) & 0xF;
+        this.rdst = (this.subg >> 2) & 0b11;
+        this.ridx = this.subg & 0b11;
+        this.sbac = this.rdst;
+        this.rop = this.ridx;
+        this.i16 = ins & 0xFFFF;
+        this.i8 = (this.i16 >> 8) & 0xFF;
+        this.ropr1 = (ins >> 12) & 0b11;
+        this.ropr2 = (ins >> 8) & 0b11;
+        this.rus = this.ropr2;
+        this.oper = this.subg & 0xF;
+    }
+    operate(opid, opr1, opr2) {
+        switch (opid) {
+            case 0: return opr1 + opr2;
+            case 1: return opr1 - opr2;
+            case 2: return opr1 * opr2;
+            case 3: return opr1 / opr2;
+            case 4: return opr1 ^ opr2;
+            case 5: return opr1 | opr2;
+            case 6: return opr1 & opr2;
+            case 7: return opr1 >> opr2;
+            case 8: return opr1 << opr2;   
+            default: return 0;
+        }
+    }
+    setRegister(rid, val) {
+        switch (rid) {
+            case 0: this.ar = val; break;
+            case 1: this.xr = val; break;
+            case 2: this.yr = val; break;
+            default: break;
+        }
+    }
+    getRegister(rid) {
+        switch (rid) {
+            case 0: return this.ar;
+            case 1: return this.xr;
+            case 2: return this.yr;
+            case 3: return 0;
+            default: return 0;
+        }
+    }
+    exi(ins) {
+        this.nwi(ins);
+
+        if (this.lenx) {
+            // {O} %A, $S
+            if (this.actx == 0b000) {
+                this.ar = this.operate(this.oper, this.ar, this.i16);
+            }
+            // LDR $XXYYh, %I
+            else if (this.actx == 0b001) {
+                this.setRegister(this.rdst, this.rex(this.i16 + this.getRegister(this.ridx)));
+            }
+            // STR $XXYYh, %I
+            else if (this.actx == 0b010) {
+                this.wex(this.i16 + this.getRegister(this.ridx), this.getRegister(this.rdst));
+            }
+            // LBR $XXYYh, %I
+            else if (this.actx == 0b100) {
+                this.setRegister(this.rdst, (this.rex(this.i16 + this.getRegister(this.ridx))) & 0xFF);
+            }
+            // SBR $XXYYh, %I
+            else if (this.actx == 0b101) {
+                this.wex(this.i16 + this.getRegister(this.ridx), this.getRegister(this.rdst) & 0xFF);
+            }
+            // JMP/BCF $XXYYh
+            else if (this.actx == 0b011) {
+                // JMP $XXYYh
+                if (this.subg == 0) {
+                    this.jf(i16);
+                }
+                // BCF $XXYYh
+                else if (this.subg == 1) {
+                    if (this.flags[0]) {
+                        this.jf(i16);
+                    }
+                }
+            }
+            // CHR $XXYYh
+            else if (this.actx == 0b110) {
+                this.setRegister(this.ridx, this.i16);
+            }
+            // TIR $XXYYh
+            else if (this.actx == 0b111) {
+                this.tmp = this.getRegister(this.ridx) - this.i16
+                this.flags[1] = Number(this.tmp == 0);
+                this.flags[2] = Number((this.tmp & 0x8000) != 0);
+                this.flags[3] = Number(tmp != 0 && (this.tmp & 0x8000) == 0);
+            }
+        }
+        else {
+            // {O} %R, %S
+            if (this.actx == 0b000) {
+                this.setRegister(this.ropr1, this.operate(this.oper, this.getRegister(this.ropr1), this.getRegister(this.ropr2)))
+            }
+            // JMP/BCF %R
+            else if (this.actx == 0b001) {
+                // JMP %R
+                if (this.subg == 0) {
+                    this.jf(i16);
+                }
+                // BCF %R
+                else if (this.subg == 1) {
+                    if (this.flags[0]) {
+                        this.jf(i16);
+                    }
+                }
+            }
+            // TSR %R
+            else if (this.actx == 0b10) {
+                // TSR %R
+                if (this.sbac == 0) {
+                    this.tmp = this.getRegister(this.ridx) - this.getRegister(this.rus);
+                    this.flags[1] = Number(this.tmp == 0);
+                    this.flags[2] = Number((this.tmp & 0x8000) != 0);
+                    this.flags[3] = Number(tmp != 0 && (this.tmp & 0x8000) == 0);
+                }
+                // LCF $ID/..
+                else if (this.sbac == 1) {
+                    // LCF $ID
+                    if (this.rop == 0) {
+                        this.flags[0] = this.flags[i8];
+                    }
+                }
+            }
+        }
+
+        return this.lenx == 1 ? 3 : 2;
+    }
+}
