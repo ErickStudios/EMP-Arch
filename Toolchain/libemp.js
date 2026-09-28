@@ -403,7 +403,7 @@ var cpuGen2 = class {
         if (this.subg == 0) {
           this.jf(this.i16);
         } else if (this.subg == 1) {
-          if (this.flags[0]) {
+          if (this.flags[0] == 1) {
             this.jf(this.i16);
           }
         }
@@ -422,7 +422,7 @@ var cpuGen2 = class {
         if (this.subg == 0) {
           this.jf(this.i16);
         } else if (this.subg == 1) {
-          if (this.flags[0]) {
+          if (this.flags[0] == 1) {
             this.jf(this.i16);
           }
         }

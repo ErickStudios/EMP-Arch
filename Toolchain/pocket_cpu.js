@@ -394,7 +394,7 @@ export class cpuGen2 {
                 }
                 // BCF $XXYYh
                 else if (this.subg == 1) {
-                    if (this.flags[0]) {
+                    if (this.flags[0] == 1) {
                         this.jf(this.i16);
                     }
                 }
@@ -424,7 +424,7 @@ export class cpuGen2 {
                 }
                 // BCF %R
                 else if (this.subg == 1) {
-                    if (this.flags[0]) {
+                    if (this.flags[0] == 1) {
                         this.jf(this.i16);
                     }
                 }
