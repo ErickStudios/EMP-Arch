@@ -152,6 +152,9 @@ export function LineAsm(line, context) {
         if (nam.startsWith('TI') && nam.length == 3) {
             return [[0b1111, [0, getRegOf(nam[2])]], 'n16'];
         }
+        if (nam.startsWith('CH') && nam.length == 3) {
+            return [[0b1110, [0, getRegOf(nam[2])]], 'n16'];
+        }
         if (nam.startsWith('TS') && nam.length == 3) {
             return [[0b0010, [0, getRegOf(nam[2])]], 'r'];
         }

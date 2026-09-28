@@ -435,6 +435,7 @@ var cpuGen2 = class {
         }
       }
     }
+    return this.lenx == 1 ? 3 : 2;
   }
 };
 
@@ -1100,6 +1101,9 @@ function LineAsm2(line, context) {
     }
     if (nam.startsWith("TI") && nam.length == 3) {
       return [[15, [0, getRegOf(nam[2])]], "n16"];
+    }
+    if (nam.startsWith("CH") && nam.length == 3) {
+      return [[14, [0, getRegOf(nam[2])]], "n16"];
     }
     if (nam.startsWith("TS") && nam.length == 3) {
       return [[2, [0, getRegOf(nam[2])]], "r"];
