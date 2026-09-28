@@ -1393,25 +1393,25 @@ function LineDisasm2(bytes, context = null) {
   const rName = (n) => ["A", "X", "Y", "Z"][n] || `R${n}`;
   const opName = (o) => ["ADD", "SUB", "MUL", "DIV", "XOR", "OR", "AND", "SHR", "SHL"][o] || `OP${o}`;
   const i16 = b1 << 8 | b2;
-  const i16h = `$${i16.toString(16).padStart(4, "0").toUpperCase()}h`;
+  const i16h = `$0${i16.toString(16).padStart(4, "0").toUpperCase()}h`;
   if (!lenx) {
     switch (actx) {
       case 0:
-        return `${opName(subg)} %${rName(ropr1)}, %${rName(ropr2)}`;
+        return `${opName(subg)} %${rName(ropr1)} %${rName(ropr2)}`;
       case 1:
         if (subg == 0) return `JMP %${rName(rus)}`;
         if (subg == 1) return `BCF %${rName(rus)}`;
         break;
       case 2:
         if (subg >> 2 == 0) return `TS${rName(ridx)} %${rName(rus)}`;
-        if (subg == 4) return `LCF $${b1.toString(16).toUpperCase()}`;
+        if (subg == 4) return `LCF $0${b1.toString(16).toUpperCase()}h`;
         break;
     }
     return `DB $${b0.toString(16).padStart(2, "0")} $${b1.toString(16).padStart(2, "0")}`;
   }
   switch (actx) {
     case 0:
-      return `${opName(subg)} %A ${i16h}`;
+      return `${opName(subg)} ${i16h}`;
     case 1:
       return `LD${rName(rdst)} %${rName(ridx)} ${i16h}`;
     case 2:
