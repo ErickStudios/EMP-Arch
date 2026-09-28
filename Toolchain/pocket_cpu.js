@@ -438,7 +438,7 @@ export class cpuGen2 {
                 else if (this.sbac == 1) {
                     // LCF $ID
                     if (this.rop == 0) {
-                        this.flags[0] = this.flags[i8];
+                        this.flags[0] = this.flags[this.i8];
                     }
                 }
             }

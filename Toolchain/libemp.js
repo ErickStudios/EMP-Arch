@@ -430,7 +430,7 @@ var cpuGen2 = class {
           this.flags[3] = Number(tmp != 0 && (this.tmp & 32768) == 0);
         } else if (this.sbac == 1) {
           if (this.rop == 0) {
-            this.flags[0] = this.flags[i8];
+            this.flags[0] = this.flags[this.i8];
           }
         }
       }
