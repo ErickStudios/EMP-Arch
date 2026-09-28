@@ -1141,7 +1141,7 @@ function LineAsm2(line, context) {
       }
       i = a;
       if (flg) {
-        return [[11, 0], "n16"];
+        return [[11, 1], "n16"];
       } else {
         return [[1, 1], ["r"]];
       }

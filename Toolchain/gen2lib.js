@@ -188,7 +188,7 @@ export function LineAsm(line, context) {
             }
             i = a;
             if (flg) {
-                return [[0b1011, 0x0], 'n16'];
+                return [[0b1011, 0x1], 'n16'];
             }
             else {
                 return [[0b0001, 0x1], ['r']];
