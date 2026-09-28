@@ -436,7 +436,7 @@ export class cpuGen2 {
                     this.tmp = this.getRegister(this.ridx) - this.getRegister(this.rus);
                     this.flags[1] = Number(this.tmp == 0);
                     this.flags[2] = Number((this.tmp & 0x8000) != 0);
-                    this.flags[3] = Number(tmp != 0 && (this.tmp & 0x8000) == 0);
+                    this.flags[3] = Number(this.tmp != 0 && (this.tmp & 0x8000) == 0);
                 }
                 // LCF $ID/..
                 else if (this.sbac == 1) {
