@@ -413,7 +413,7 @@ var cpuGen2 = class {
         this.tmp = this.getRegister(this.ridx) - this.i16;
         this.flags[1] = Number(this.tmp == 0);
         this.flags[2] = Number((this.tmp & 32768) != 0);
-        this.flags[3] = Number(tmp != 0 && (this.tmp & 32768) == 0);
+        this.flags[3] = Number(this.tmp != 0 && (this.tmp & 32768) == 0);
       }
     } else {
       if (this.actx == 0) {

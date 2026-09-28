@@ -408,7 +408,7 @@ export class cpuGen2 {
                 this.tmp = this.getRegister(this.ridx) - this.i16
                 this.flags[1] = Number(this.tmp == 0);
                 this.flags[2] = Number((this.tmp & 0x8000) != 0);
-                this.flags[3] = Number(tmp != 0 && (this.tmp & 0x8000) == 0);
+                this.flags[3] = Number(this.tmp != 0 && (this.tmp & 0x8000) == 0);
             }
         }
         else {
