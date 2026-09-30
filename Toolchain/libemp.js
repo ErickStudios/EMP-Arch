@@ -329,7 +329,7 @@ var cpuGen2 = class {
     this.rus = this.ropr2;
     this.oper = this.subg & 15;
   }
-  operate(opid, opr1, opr2) {
+  operate2(opid, opr1, opr2) {
     switch (opid) {
       case 0:
         return opr1 + opr2;
@@ -338,7 +338,7 @@ var cpuGen2 = class {
       case 2:
         return opr1 * opr2;
       case 3:
-        return opr1 / opr2;
+        return Math.floor(opr1 / opr2);
       case 4:
         return opr1 ^ opr2;
       case 5:
@@ -352,6 +352,9 @@ var cpuGen2 = class {
       default:
         return 0;
     }
+  }
+  operate(opid, opr1, opr2) {
+    return this.operate2(opid, opr1, opr2) & 65535;
   }
   setRegister(rid, val) {
     switch (rid) {

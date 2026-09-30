@@ -327,12 +327,12 @@ export class cpuGen2 {
         this.rus = this.ropr2;
         this.oper = this.subg & 0xF;
     }
-    operate(opid, opr1, opr2) {
+    operate2(opid, opr1, opr2) {
         switch (opid) {
             case 0: return opr1 + opr2;
             case 1: return opr1 - opr2;
             case 2: return opr1 * opr2;
-            case 3: return opr1 / opr2;
+            case 3: return Math.floor(opr1 / opr2);
             case 4: return opr1 ^ opr2;
             case 5: return opr1 | opr2;
             case 6: return opr1 & opr2;
@@ -340,6 +340,9 @@ export class cpuGen2 {
             case 8: return opr1 << opr2;   
             default: return 0;
         }
+    }
+    operate(opid, opr1, opr2) {
+        return this.operate2(opid, opr1, opr2) & 0xFFFF;
     }
     setRegister(rid, val) {
         switch (rid) {
