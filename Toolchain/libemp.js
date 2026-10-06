@@ -1271,6 +1271,11 @@ function LineAsm2(line, context) {
             let ra = parseSyntx(fomi);
             steps.push(ra);
             result2 = result2 / ra;
+          } else if (xc == "%") {
+            let fomi = {};
+            let ra = parseSyntx(fomi);
+            steps.push(ra);
+            result2 = result2 % ra;
           }
         }
       }

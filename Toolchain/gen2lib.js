@@ -320,6 +320,12 @@ export function LineAsm(line, context) {
                         steps.push(ra);
                         result = result / ra;
                     }
+                    else if (xc == '%') {
+                        let fomi = {};
+                        let ra = parseSyntx(fomi);
+                        steps.push(ra);
+                        result = result % ra;
+                    }
                 }
             }
             consume();
