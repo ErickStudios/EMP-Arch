@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 ErickCraftStudios-Markarian (Markarian)
+// EMP Architecture - open hardware fsm
+
 /**
     A, X, Y, ZERO
     0b0000:0xO 0xRS      = {O} %R %S

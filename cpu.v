@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2026 ErickCraftStudios-Markarian (Markarian)
+// EMP Architecture - open hardware fsm
+
 module cpu #(
     parameter MODEL_TYPE = 100
 )(
