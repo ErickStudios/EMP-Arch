@@ -61,6 +61,7 @@ wire [1:0]  ropr1;
 wire [1:0]  ropr2;
 wire [1:0]  sbac;
 
+assign zr = 16'h0;
 assign lenx = ins[23];
 assign actx = ins[22:20];
 assign subg = ins[19:16];
