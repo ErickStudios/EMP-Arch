@@ -328,6 +328,10 @@ var cpuGen2 = class {
     this.ropr2 = ins >> 8 & 3;
     this.rus = this.ropr2;
     this.oper = this.subg & 15;
+    this.i8h = this.i8 >> 4 & 15;
+    this.i8l = this.i8 & 15;
+    this.i8lh = this.i8l >> 2 & 3;
+    this.i8ll = this.i8l & 3;
   }
   operate2(opid, opr1, opr2) {
     switch (opid) {
@@ -423,10 +427,10 @@ var cpuGen2 = class {
         this.setRegister(this.ropr1, this.operate(this.oper, this.getRegister(this.ropr1), this.getRegister(this.ropr2)));
       } else if (this.actx == 1) {
         if (this.subg == 0) {
-          this.jf(this.i16);
+          this.jf(this.getRegister(this.rus));
         } else if (this.subg == 1) {
           if (this.flags[0] == 1) {
-            this.jf(this.i16);
+            this.jf(this.getRegister(this.rus));
           }
         }
       } else if (this.actx == 2) {
@@ -438,6 +442,16 @@ var cpuGen2 = class {
         } else if (this.sbac == 1) {
           if (this.rop == 0) {
             this.flags[0] = this.flags[this.i8];
+          } else if (this.rop == 1) {
+            if (this.i8h == 0) {
+              if (this.i8lh == 0) {
+                this.setRegister(this.i8ll, this.getRegister(this.i8ll) + 1 & 65535);
+              } else if (this.i8lh == 1) {
+                this.setRegister(this.i8ll, this.getRegister(this.i8ll) - 1 & 65535);
+              }
+            } else if (this.i8h == 1) {
+              this.setRegister(this.i8lh, this.getRegister(this.i8ll));
+            }
           }
         }
       }
@@ -1099,6 +1113,12 @@ function LineAsm2(line, context) {
     let nam = name.toUpperCase();
     if (nam == "LCF") {
       return [[2, 4], "n"];
+    } else if (nam == "INC") {
+      return [[2, 5], [0, [0, "r"]]];
+    } else if (nam == "DEC") {
+      return [[2, 5], [0, [1, "r"]]];
+    } else if (nam == "MOV") {
+      return [[2, 5], [1, ["r", "r"]]];
     }
     if (nam.startsWith("LD") && nam.length == 3) {
       return [[9, [getRegOf(nam[2]), "r"]], "n16"];

@@ -326,6 +326,10 @@ export class cpuGen2 {
         this.ropr2 = (ins >> 8) & 0b11;
         this.rus = this.ropr2;
         this.oper = this.subg & 0xF;
+        this.i8h = (this.i8 >> 4) & 0xF;
+        this.i8l = this.i8 & 0xF;
+        this.i8lh = ((this.i8l >> 2) & 0b11);
+        this.i8ll = (this.i8l) & 0b11;
     }
     operate2(opid, opr1, opr2) {
         switch (opid) {
@@ -423,12 +427,12 @@ export class cpuGen2 {
             else if (this.actx == 0b001) {
                 // JMP %R
                 if (this.subg == 0) {
-                    this.jf(this.i16);
+                    this.jf(this.getRegister(this.rus));
                 }
                 // BCF %R
                 else if (this.subg == 1) {
                     if (this.flags[0] == 1) {
-                        this.jf(this.i16);
+                        this.jf(this.getRegister(this.rus));
                     }
                 }
             }
@@ -446,6 +450,24 @@ export class cpuGen2 {
                     // LCF $ID
                     if (this.rop == 0) {
                         this.flags[0] = this.flags[this.i8];
+                    }
+                    // INC/DEC %R/MOV %R %S
+                    else if (this.rop == 1) {
+                        // INC/DEC %R
+                        if (this.i8h == 0) {
+                            // INC %R
+                            if (this.i8lh == 0b00) {
+                                this.setRegister(this.i8ll, (this.getRegister(this.i8ll) + 1) & 0xFFFF);
+                            }
+                            // DEC %R
+                            else if (this.i8lh == 0b01) {
+                                this.setRegister(this.i8ll, (this.getRegister(this.i8ll) - 1) & 0xFFFF);
+                            }
+                        }
+                        // MOV %R %S
+                        else if (this.i8h == 1) {
+                            this.setRegister(this.i8lh, this.getRegister(this.i8ll));
+                        }
                     }
                 }
             }

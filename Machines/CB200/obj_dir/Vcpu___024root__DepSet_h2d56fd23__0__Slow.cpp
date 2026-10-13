@@ -47,7 +47,7 @@ VL_ATTR_COLD void Vcpu___024root___eval_settle(Vcpu___024root* vlSelf) {
 #ifdef VL_DEBUG
             Vcpu___024root___dump_triggers__stl(vlSelf);
 #endif
-            VL_FATAL_MT("../../cpu.v", 1, "", "Settle region did not converge.");
+            VL_FATAL_MT("../../cpu.v", 5, "", "Settle region did not converge.");
         }
         __VstlIterCount = ((IData)(1U) + __VstlIterCount);
         __VstlContinue = 0U;

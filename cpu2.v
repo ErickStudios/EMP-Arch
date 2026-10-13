@@ -4,23 +4,29 @@
 
 /**
     A, X, Y, ZERO
-    0b0000:0xO 0xRS      = {O} %R %S
-    0b1000:0xO 0xSSSS    = {O} $S
-    0b1001:0bRRII 0xXXYY = LDR %I $XXYYh
-    0b1010:0bRRII 0xXXYY = STR %I $XXYYh
-    0b1100:0bRRII 0xXXYY = LBR %I $XXYYh
-    0b1101:0bRRII 0xXXYY = SBR %I $XXYYh
-    0b1011:0x0 0xXXYY    = JMP $XXYYh
-    0b1011:0x1 0xXXYY    = BCF $XXYYh
-    0b0001:0x0 0x?R      = JMP %R
-    0b0001:0x1 0x?R      = BCF %R
-    0b1110:0b00RR 0xXXYY = CHR $XXYYh
-    0b1111:0b00RR 0xXXYY = TIR $XXYYh
-    0b0010:0b00RR 0x?R   = TSR %R
-    0b0010:0b0100 0xVV   = LCF $VV
+    0b0000:0xO 0xRS             = {O} %R %S
+    0b1000:0xO 0xSSSS           = {O} $S
+    0b1001:0bRRII 0xXXYY        = LDR %I $XXYYh
+    0b1010:0bRRII 0xXXYY        = STR %I $XXYYh
+    0b1100:0bRRII 0xXXYY        = LBR %I $XXYYh
+    0b1101:0bRRII 0xXXYY        = SBR %I $XXYYh
+    0b1011:0x0 0xXXYY           = JMP $XXYYh
+    0b1011:0x1 0xXXYY           = BCF $XXYYh
+    0b0001:0x0 0x?R             = JMP %R
+    0b0001:0x1 0x?R             = BCF %R
+    0b1110:0b00RR 0xXXYY        = CHR $XXYYh
+    0b1111:0b00RR 0xXXYY        = TIR $XXYYh
+    0b0010:0b00RR 0x?R          = TSR %R
+    0b0010:0b0100 0xVV          = LCF $VV
+    0b0010:0b0101 0x0:0b00RR    = INC %R
+    0b0010:0b0101 0x0:0b01RR    = DEC %R
+    0b0010:0b0101 0x1:0bRRDD    = MOV %R %S
+
 */
 
-module cpu(
+module cpu #(
+    parameter MODEL_TYPE = 200
+)(
     input               clk,
     input               rst,
     output reg  [15:0]  adr,
@@ -57,6 +63,8 @@ wire [15:0] i16;
 wire [7:0]  i8;
 wire [1:0]  rus;
 
+wire [3:0]  i8l;
+wire [3:0]  i8h;
 wire [1:0]  ropr1;
 wire [1:0]  ropr2;
 wire [1:0]  sbac;
@@ -74,6 +82,8 @@ assign rop = ridx;
 
 assign i16 = ins[15:0];
 assign i8 = ins[15:8];
+assign i8l = i8[3:0];
+assign i8h = i8[7:4];
 
 assign ropr1 = ins[13:12];
 assign ropr2 = ins[9:8];
@@ -232,8 +242,26 @@ always @(posedge clk or posedge rst) begin
                 // LCF $ID/...
                 else if (sbac == 1) begin
                     // LCF $ID
-                    if (rop == 0) begin
+                    if (rop == 2'b00) begin
                         flags[0] = flags[i8];
+                    end
+                    // INC/DEC %R/MOV %R %S
+                    else if (rop == 2'b01) begin
+                        // INC/DEC %R
+                        if (i8h == 4'h0) begin
+                            // INC %R
+                            if (i8l[3:2] == 2'b00) begin
+                                setRegister(i8l[1:0], getRegister(i8l[1:0]) + 1);
+                            end
+                            // DEC %R
+                            else if (i8l[3:2] == 2'b01) begin
+                                setRegister(i8l[1:0], getRegister(i8l[1:0]) - 1);
+                            end
+                        end
+                        // MOV %R %S
+                        else if (i8h == 4'h1) begin
+                            setRegister(i8l[3:2], getRegister(i8l[1:0]));
+                        end
                     end
                 end
             end
