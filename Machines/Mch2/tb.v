@@ -16,6 +16,18 @@ module tb;
     reg  [7:0]      ram0 [0:2047];
     wire [7:0]      mm_ind;
     reg [7:0]       vram[0:255]; // 64x32 1bpp
+    reg [1:0]       penclr_g;
+    reg [7:0]       pen_chr;
+    reg             pen_en;
+    wire            pen_ack;
+    reg             brd_dbg = 0;
+
+    tty_pen ttyiter(
+        .clr_gestione   (penclr_g),
+        .ascii_char     (pen_chr),
+        .enable         (pen_en),
+        .ack            (pen_ack)
+    );
 
     cpu uut(
         .clk(clk),
@@ -23,11 +35,11 @@ module tb;
         .adr(adr),
         .wvx(wvx),
         .rvx(rvx),
-        .rb(rb),
+        .rb (rb),
         .wex(wex),
         .rex(rex),
         .exi(exi),
-        .jf(jf),
+        .jf (jf),
         .ins(ins),
         .lnx(lnx)
     );
@@ -43,6 +55,14 @@ module tb;
                 BoardRead = ram0[addr - 16'h700];
             else if (addr >= 16'h200 && addr < 16'h300)
                 BoardRead = vram[addr - 16'h200];
+            else if (addr >= 16'h400 && addr < 16'h500) begin
+                if (addr == 16'h401)
+                    BoardRead = pen_chr;
+                else if (addr == 16'h400)
+                    BoardRead = { 6'h0,  penclr_g};
+                else
+                    BoardRead = 8'h00;
+            end
             else
                 BoardRead = 8'h00;
         end
@@ -56,10 +76,24 @@ module tb;
                 ram0[addr - 16'h700] = value;
             else if (addr >= 16'h200 && addr < 16'h300)
                 vram[addr - 16'h200] = value;
+            else if (addr >= 16'h400 && addr < 16'h500) begin
+                if (addr == 16'h401) begin
+                    pen_chr = value;
+                    pen_en = 1;
+                end
+                else if (addr == 16'h400)
+                    penclr_g = value[1:0];
+            end
         end
     endtask
 
     always #5 clk = ~clk;
+
+    always @(posedge clk) begin
+        if (pen_ack && pen_en) begin
+            pen_en = 0;
+        end
+    end
 
     always @(negedge clk) begin
         if (!exi) begin
@@ -74,7 +108,7 @@ module tb;
                     rvx = {BoardRead(adr), BoardRead(adr+1)};
                 end
     
-                $display("#%h L%c %h, %h", pc, mm_ind, adr, rvx);
+                if (brd_dbg) $display("#%h L%c %h, %h", pc, mm_ind, adr, rvx);
 
             end
             // When Write
@@ -89,7 +123,7 @@ module tb;
                     BoardWrite(adr+1, wvx[7:0]);
                 end
 
-                $display("#%h S%c %h, %h", pc, mm_ind, adr, wvx);
+                if (brd_dbg) $display("#%h S%c %h, %h", pc, mm_ind, adr, wvx);
             end
         end
 
@@ -99,7 +133,7 @@ module tb;
                 exi = 1;
             end
             else if (jf) begin
-                $display("#%h BR %h", pc, adr);
+                if (brd_dbg) $display("#%h BR %h", pc, adr);
 
                 pc = adr;
                 if (exi) begin

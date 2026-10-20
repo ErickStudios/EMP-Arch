@@ -1,0 +1,14 @@
+
+    local 0xf0000
+
+reset:
+    li %l $reset
+    jf %l %z $0 # always equ
+
+tax:
+    rsv (0xfff0-$)
+    
+    li %l $reset
+    jf %l %z $0 # always equ
+
+    rsv (0x10000-$)

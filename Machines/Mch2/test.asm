@@ -9,6 +9,11 @@
     ;   add %a %x
     ;   sba %z $700h
 
+    chy $0148h
+    sty %z $400h
+    chy $0149h
+    sty %z $400h
+
     chy $4032
     mov %a %y
     inc %a

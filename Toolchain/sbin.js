@@ -2,12 +2,16 @@ import { argv, exit } from "node:process";
 import * as asm from "./slib.js";
 import * as fileSystem from "node:fs";
 import * as asm2 from "./gen2lib.js";
+import * as asm3 from "./gen3lib.js";
 
 let asmFile = argv[2];
 let outpudFile = argv[3];
 let asmFileContent = fileSystem.readFileSync(asmFile, 'utf-8');
 
-let fna = argv.includes('-g2') ? asm2.parseAsm : asm.parseAsm
+let fna = argv.includes('-g2') ? asm2.parseAsm : ( 
+    argv.includes('-g3') ? asm3.parseAsm :
+    asm.parseAsm 
+)
 
 let resulta = fna(asmFileContent);
 let result = resulta.result;

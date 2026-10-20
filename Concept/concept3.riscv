@@ -1,0 +1,18 @@
+    # r (3 bits opr): z = 0b000, a = 0b001, x = 0b010, y = 0b011, w = 0b100, n = 0b101, lnk = 0b110
+    # [group:4, func:3, lowMody:1] [r1:3, r2:3, (r3:r || pad:3)] i8? || i16
+
+    add %rd %ra %rb # 0b0010:0b0000 0bRD:0bRA:0bRB (add)
+    addi %rd %ra $i # 0b0010:0b0001 0bRD:0bRA 0x?? (add imm)
+    sub %rd %ra %rb # 0b0010:0b0010 0bRD:0bRA:0bRB (sub)
+    subi %rd %ra $i # 0b0010:0b0011 0bRD:0bRA 0x?? (sub imm)
+    mv %rd %rs      # 0b0001:0b0010 0bRD:0bRS :: %rd = %rs
+    mh %r $i        # 0b0001:0bRRR0 0x???? (load high) :: %r = %r | (i << 16)
+    ml %r $l        # 0b0001:0bRRR1 0x???? (load low) :: %r = %r | i
+    mxl %r $i       # 0b0011:0bRRR? 0x???? (load low zero) :: %r = (%r xor %r) | i
+    sb %r %rb+%ro   # 0b0000:0b0000 0bRB:0bRO:0bR (store byte)
+    sh %r %rb+%ro   # 0b0000:0b0010 0bRB:0bRO:0bR (store half)
+    sw %r %rb+%ro   # 0b0000:0b0100 0bRB:0bRO:0bR (store word)
+    lb %r %rb+%ro   # 0b0000:0b1000 0bRB:0bRO:0bR (load byte)
+    lh %r %rb+%ro   # 0b0000:0b1010 0bRB:0bRO:0bR (load half)
+    lw %r %rb+%ro   # 0b0000:0b1100 0bRB:0bRO:0bR (load word)
+    jf %rt %rc $f   # 0b0100:0b0000 0bRT_:0bRC_ 0x?_ (jump if flag)
