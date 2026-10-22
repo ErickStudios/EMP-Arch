@@ -164,7 +164,7 @@ always @(posedge exi) begin
 
             // Memory Stores
             4'b0000: begin
-                adr = peek(rd) + peek(ra);
+                adr = peek(ra) + peek(rb);
                 mft = grfn[1:0];
                 // Load
                 if (grfn[2]) begin

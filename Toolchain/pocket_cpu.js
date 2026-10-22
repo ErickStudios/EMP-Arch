@@ -476,3 +476,148 @@ export class cpuGen2 {
         return this.lenx == 1 ? 3 : 2;
     }
 }
+
+export class cpuGen3 {
+    constructor() {
+        this.clr();
+    }
+    rex(adr, mft) {
+        return 0;
+    }
+    wex(adr, mft, wvx) {
+
+    }
+    jf(adr) {
+
+    }
+    clr() {
+        this.a = 0;
+        this.x = 0;
+        this.y = 0;
+        this.w = 0;
+        this.n = 0;
+        this.lnk = 0;
+        this.z = 0; // locked
+
+        this.rmap = ['z','a','x','y','w','n','lnk', 'z']
+    }
+    upt() {
+        if (this.z != 0) 
+            this.z = 0;
+    }
+    peek(_r) {
+        let r = _r & 0x7;
+        return this[this.rmap[r]];
+    }
+    poke(_r, v) {
+        let r = _r & 0x7;
+        this[this.rmap[r]] = v & 0xFFFFFFFF;
+        this.upt(); // fix state if corrupted
+    }
+    gip(ins) {
+        this.upt();
+
+        this.rgs  = (ins & 0x00FF80) >> 7;
+        
+        this.igr  = (ins & 0xF00000) >> 20; // ins[23:20]
+        this.grfn = (ins & 0x0E0000) >> 17; // ins[19:17]
+        this.lowm = (ins & 0x010000) >> 16; // ins[16]
+
+        this.rd   = (this.rgs >> 6) & 0x7;  // ins[15:13]
+        this.ra   = (this.rgs >> 3) & 0x7;  // ins[12:10]
+        this.rb   = this.rgs & 0x7;         // ins[9:7]
+
+        this.i16  = ins & 0xFFFF;
+        this.i8   = this.i16 & 0xFF;
+    }
+    exi(_ins) {
+        if (typeof _ins === 'bigint') 
+            return this.exi(Number(_ins & 0xFFFFFFn));
+
+        let ins = _ins & 0xFFFFFF;
+
+        this.gip(ins);
+
+        switch (this.igr) {
+            // Aritmethic
+            case 0b0010:
+                // Ready
+                let o1 = this.peek(this.ra);
+                let o2 = this.lowm ? this.i8 : this.peek(this.rb);
+                let v = o1;
+
+                // Operation Maker
+                switch (this.grfn) {
+                    // Adition
+                    case 0b000:
+                        v = o1 + o2;
+                        break;        
+                    // Substraction
+                    case 0b001:
+                        v = o1 - o2;   
+                        break;    
+                    default:
+                        break;
+                }; this.poke(this.rd, v);
+                break;
+            // Immediates Load High/Low
+            case 0b0001:
+                let rv = this.peek(this.grfn);
+
+                if (this.lowm)
+                    rv = (rv & 0xFFFF0000) | this.i16;
+                else
+                    rv = (rv & 0xFFFF) | (this.i16 << 16);
+
+                this.poke(this.grfn, rv);
+                break;
+            // Load Immediate Zero
+            case 0b0011:
+                this.poke(this.grfn, this.i16);
+                break;
+            // Memory Stores
+            case 0b0000:
+                let adr = (this.peek(this.ra) + this.peek(this.rb)) & 0xFFFFFFFF;
+                let mft = this.grfn & 0b11;
+                let mask = (
+                    mft == 0b00 ? 0xFF :
+                    mft == 0b01 ? 0xFFFF :
+                    0xFFFFFFFF
+                )
+
+                // Load
+                if (this.grfn & 0b100) {
+                    this.poke(this.rd, this.rex(adr, mft) & mask);
+                }
+                // Store
+                else {
+                    this.wex(adr, mft, this.peek(this.rd) & mask);
+                }
+                break;
+            // More
+            case 0b0100:
+                switch (this.grfn) {
+                    case 0b000:
+                        this.tmp = this.peek(this.ra);
+                        this.flags = [
+                            1,
+                            Number(this.tmp == 0),
+                            Number((this.tmp & 0x80000000) != 0),
+                            Number((this.tmp != 0) && ((this.tmp & 0x80000000) == 0)),
+                        ]
+
+                        let flagIndex = (this.i16 >> 6) & 0xF;
+
+                        // Jump Directlly
+                        if (this.flags[flagIndex]) {
+                            this.jf(this.peek(this.rd));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default: break;
+        }
+    }
+}

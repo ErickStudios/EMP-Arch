@@ -2,7 +2,14 @@
     local 0xf0000
 
 reset:
-    li %l $reset
+    li %a $0xABCDEF
+    lh %x %a+%z
+
+    mxl %x $0x134
+    sw %x %a+%z
+
+.sa:
+    li %l $.sa
     jf %l %z $0 # always equ
 
 tax:

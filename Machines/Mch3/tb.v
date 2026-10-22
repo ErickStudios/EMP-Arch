@@ -5,10 +5,14 @@ module tb();
     reg [31:0]  pc = 32'hffff0;
     wire        wex;
     wire        rex;
+    wire [31:0] wvx;
+    reg  [31:0] rvx;
     wire        jf;
     wire [31:0] adr;
     reg  [7:0]  rom[0:32'hffff];
     reg         clk = 0;
+    wire [1:0]  mft;
+    reg         nis = 0;
 
     always #1   clk = ~clk;
 
@@ -19,7 +23,10 @@ module tb();
         .wex(wex),
         .rex(rex),
         .adr(adr),
-        .jf(jf)
+        .wvx(wvx),
+        .rvx(rvx),
+        .jf(jf),
+        .mft(mft)
     );
 
     // Function For Read Byte
@@ -34,20 +41,40 @@ module tb();
         if (exi) exi = 0;
     end
 
+    // Reading Fetcher
+    always @(posedge rex) begin
+        $display("R%h %h", mft, adr);
+    end
+
+    // Writer Fetcher
+    always @(posedge wex) begin
+        $display("W%h %h %h", mft, adr, wvx);
+    end
+
     // Clock Instruction Fetcher
     always @(negedge clk) begin
         if (!clr) begin
             if (jf) begin
                 pc = adr;
+                nis = 1;
             end
             else begin
                 pc = pc + 3;
             end
-            exi = 1;
         end
 
-        ins = {rb(pc), rb(pc+1), rb(pc+2)};
-        $display("#%h %h", pc, ins);
+        if (nis) begin
+            nis = 0;
+            exi = 1;
+            ins = 24'h200000;
+        end
+        else begin
+            exi = 1;
+            ins = {rb(pc), rb(pc+1), rb(pc+2)};
+            $display("#%h %h", pc, ins);
+
+            if (ins[23:16] == 8'h40) nis = 1;
+        end
     end
 
     initial begin
