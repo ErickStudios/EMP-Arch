@@ -55,7 +55,7 @@ module tb();
     always @(negedge clk) begin
         if (!clr) begin
             if (jf) begin
-                pc = adr;
+                pc = adr - 3;
                 nis = 1;
             end
             else begin

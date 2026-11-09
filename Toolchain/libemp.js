@@ -2107,60 +2107,65 @@ function LineAsm3(line, context) {
   return result;
 }
 function LineDisasm3(bytes, context = null) {
-  if (!bytes || bytes.length == 0) return "";
-  if (bytes.length == 1) return `DB $${bytes[0].toString(16).padStart(2, "0").toUpperCase()}`;
-  const b0 = bytes[0];
-  const b1 = bytes[1];
-  const b2 = bytes[2] || 0;
-  const lenx = b0 >> 7 & 1;
-  const actx = b0 >> 4 & 7;
-  const subg = b0 & 15;
-  const rdst = subg >> 2 & 3;
-  const ridx = subg & 3;
-  const ropr1 = b1 >> 4 & 3;
-  const ropr2 = b1 & 3;
-  const rus = b1 & 3;
-  const rName = (n) => ["A", "X", "Y", "Z"][n] || `R${n}`;
-  const opName = (o) => ["ADD", "SUB", "MUL", "DIV", "XOR", "OR", "AND", "SHR", "SHL"][o] || `OP${o}`;
-  const i16 = b1 << 8 | b2;
-  const i16h = `$0${i16.toString(16).padStart(4, "0").toUpperCase()}h`;
-  if (!lenx) {
-    switch (actx) {
-      case 0:
-        return `${opName(subg)} %${rName(ropr1)} %${rName(ropr2)}`;
-      case 1:
-        if (subg == 0) return `JMP %${rName(rus)}`;
-        if (subg == 1) return `BCF %${rName(rus)}`;
-        break;
+  if (bytes.length >= 3 || typeof bytes === "number") {
+    let info = {};
+    let asm_info = {};
+    let ins = bytes;
+    if (typeof bytes === "number")
+      Number.parseInt([bytes[0], bytes[1], bytes[2]].map((v) => Number(v).toString(16).padStart(2, "0")).join(""), 16);
+    console.log(ins.toString(16));
+    let regs = ["z", "a", "x", "y", "w", "n", "lnk", "?"];
+    info.rgs = (ins & 65408) >> 7;
+    info.igr = (ins & 15728640) >> 20;
+    info.grfn = (ins & 917504) >> 17;
+    info.lowm = (ins & 65536) >> 16;
+    info.rd = info.rgs >> 6 & 7;
+    info.ra = info.rgs >> 3 & 7;
+    info.rb = info.rgs & 7;
+    info.i16 = ins & 65535;
+    info.i8 = info.i16 & 255;
+    info.flix = info.i16 >> 6 & 15;
+    asm_info.rd = `%${regs[info.rd]}`;
+    asm_info.ra = `%${regs[info.ra]}`;
+    asm_info.rb = `%${regs[info.rb]}`;
+    asm_info.grfnr = `%${regs[info.grfn]}`;
+    asm_info.i16 = `#${info.i16.toString()}`;
+    asm_info.i8 = `#${info.i8.toString()}`;
+    switch (info.igr) {
+      // Aritmethic
       case 2:
-        if (subg >> 2 == 0) return `TS${rName(ridx)} %${rName(rus)}`;
-        if (subg == 4) return `LCF $0${b1.toString(16).toUpperCase()}h`;
+        let oprs = ["add", "sub"];
+        let i_ind = info.lowm ? ["i", asm_info.i8] : ["", asm_info.rb];
+        if (info.grfn < oprs.length) {
+          return `${oprs[info.grfn]}${i_ind[0]} ${asm_info.rd} ${asm_info.ra} ${i_ind[1]}`;
+        }
+        break;
+      // Immediates Load High/Low
+      case 1:
+        return `m${info.lowm ? "l" : "h"} ${asm_info.grfnr} ${asm_info.i16}`;
+      // Load Immediate Zero
+      case 3:
+        return `mxl ${asm_info.grfnr} ${asm_info.i16}`;
+      // Memory Stores
+      case 0:
+        let adr_repr = `${asm_info.ra}+${asm_info.rb}`;
+        let thx = ["b", "h", "w", void 0][info.grfn & 3];
+        let thi = `${info.grfn & 256 ? "s" : "l"}${thx}`;
+        return `${thi} ${asm_info.rd} ${adr_repr}`;
+      // More
+      case 4:
+        switch (info.grfn) {
+          case 0:
+            return `jf ${asm_info.rd} ${asm_info.ra} #${info.flix.toString()}`;
+          default:
+            break;
+        }
+        break;
+      default:
         break;
     }
-    return `DB $${b0.toString(16).padStart(2, "0")} $${b1.toString(16).padStart(2, "0")}`;
   }
-  switch (actx) {
-    case 0:
-      return `${opName(subg)} ${i16h}`;
-    case 1:
-      return `LD${rName(rdst)} %${rName(ridx)} ${i16h}`;
-    case 2:
-      return `ST${rName(rdst)} %${rName(ridx)} ${i16h}`;
-    case 4:
-      return `LB${rName(rdst)} %${rName(ridx)} ${i16h}`;
-    case 5:
-      return `SB${rName(rdst)} %${rName(ridx)} ${i16h}`;
-    case 3:
-      if (subg == 0) return `JMP ${i16h}`;
-      if (subg == 1) return `BCF ${i16h}`;
-      break;
-    case 6:
-      return `CH${rName(ridx)} $${i16h}`;
-    case 7: {
-      return `TI${rName(ridx)} ${i16h}`;
-    }
-  }
-  return `DB $${b0.toString(16).padStart(2, "0")} $${b1.toString(16).padStart(2, "0")} $${b2.toString(16).padStart(2, "0")}`;
+  return "invalid";
 }
 function parseAsm3(code) {
   let ctx = new Context3();

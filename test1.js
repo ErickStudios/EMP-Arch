@@ -86,7 +86,7 @@ cpu.rst = (a) => {
     pc = 0xFFFF0;
 }
 cpu.jf = (a) => {
-    pc = a - 3;
+    pc = a - 6;
 }
 cpu.rex = ReadBus;
 cpu.wex = WriteBus;
@@ -96,7 +96,8 @@ cpu.rst()
 let v = setInterval(function () {
     let ins = FetchInstruction(
         pc
-    ); cpu.exi(ins);
+    ); 
+    cpu.exi(ins);
 
     console.log(`#${pc.toString(16).padStart(8, '0')} ${ins.toString(16).padStart(6, '0')}`)
 
