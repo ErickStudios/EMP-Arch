@@ -466,7 +466,8 @@ var cpuGen2 = class {
   }
 };
 var cpuGen3 = class {
-  constructor() {
+  constructor(model_type = 300) {
+    this.model = model_type;
     this.clr();
   }
   rex(adr, mft) {
@@ -530,6 +531,16 @@ var cpuGen3 = class {
           // Substraction
           case 1:
             v = o1 - o2;
+            break;
+          // Mul
+          case 2:
+            if (this.model >= 350)
+              v = o1 * o2;
+            break;
+          // Div
+          case 3:
+            if (this.model >= 350)
+              v = Math.floor(o1 / o2);
             break;
           default:
             break;
@@ -1770,7 +1781,7 @@ function LineAsm3(line, context) {
         { type: "const", value: 0, bits: 24 - 17 }
       ],
       ADDI: [
-        { type: "const", value: 32, bits: 8 },
+        { type: "const", value: 33, bits: 8 },
         { type: "reg", bits: 3 },
         { type: "reg", bits: 3 },
         { type: "const", value: 0, bits: 2 },
@@ -1784,7 +1795,35 @@ function LineAsm3(line, context) {
         { type: "const", value: 0, bits: 24 - 17 }
       ],
       SUBI: [
-        { type: "const", value: 34, bits: 8 },
+        { type: "const", value: 35, bits: 8 },
+        { type: "reg", bits: 3 },
+        { type: "reg", bits: 3 },
+        { type: "const", value: 0, bits: 2 },
+        { type: "imm", bits: 8 }
+      ],
+      MUL: [
+        { type: "const", value: 36, bits: 8 },
+        { type: "reg", bits: 3 },
+        { type: "reg", bits: 3 },
+        { type: "reg", bits: 3 },
+        { type: "const", value: 0, bits: 24 - 17 }
+      ],
+      MULI: [
+        { type: "const", value: 37, bits: 8 },
+        { type: "reg", bits: 3 },
+        { type: "reg", bits: 3 },
+        { type: "const", value: 0, bits: 2 },
+        { type: "imm", bits: 8 }
+      ],
+      DIV: [
+        { type: "const", value: 38, bits: 8 },
+        { type: "reg", bits: 3 },
+        { type: "reg", bits: 3 },
+        { type: "reg", bits: 3 },
+        { type: "const", value: 0, bits: 24 - 17 }
+      ],
+      DIVI: [
+        { type: "const", value: 39, bits: 8 },
         { type: "reg", bits: 3 },
         { type: "reg", bits: 3 },
         { type: "const", value: 0, bits: 2 },
@@ -1847,7 +1886,7 @@ function LineAsm3(line, context) {
     let buffer = 0;
     let used = 0;
     function write(value, bits) {
-      value = BigInt(value);
+      value = BigInt(value ?? 0);
       bits = Number(bits);
       if (bits < 0 || bits > 32) {
         throw new Error(`Invalid field width: ${bits}`);
@@ -2134,7 +2173,7 @@ function LineDisasm3(bytes, context = null) {
     switch (info.igr) {
       // Aritmethic
       case 2:
-        let oprs = ["add", "sub"];
+        let oprs = ["add", "sub", "mul", "div"];
         let i_ind = info.lowm ? ["i", asm_info.i8] : ["", asm_info.rb];
         if (info.grfn < oprs.length) {
           return `${oprs[info.grfn]}${i_ind[0]} ${asm_info.rd} ${asm_info.ra} ${i_ind[1]}`;

@@ -10,6 +10,10 @@
     addi %rd %ra $i # 0b0010:0b0001 0bRD:0bRA 0x?? (add imm)
     sub %rd %ra %rb # 0b0010:0b0010 0bRD:0bRA:0bRB (sub)
     subi %rd %ra $i # 0b0010:0b0011 0bRD:0bRA 0x?? (sub imm)
+    mul %rd %ra %rb # 0b0010:0b0100 0bRD:0bRA:0bRB (mul 350+)
+    muli %rd %ra $i # 0b0010:0b0101 0bRD:0bRA 0x?? (mul imm 350+)
+    div %rd %ra %rb # 0b0010:0b0110 0bRD:0bRA:0bRB (div 350+)
+    divi %rd %ra $i # 0b0010:0b0111 0bRD:0bRA 0x?? (div imm 350+)
     mv %rd %rs      # 0b0001:0b0010 0bRD:0bRS :: %rd = %rs
     mh %r $i        # 0b0001:0bRRR0 0x???? (load high) :: %r = %r | (i << 16)
     ml %r $l        # 0b0001:0bRRR1 0x???? (load low) :: %r = %r | i
@@ -22,7 +26,9 @@
     lw %r %rb+%ro   # 0b0000:0b1100 0bRB:0bRO:0bR (load word)
     jf %rt %rc $f   # 0b0100:0b0000 0bRT_:0bRC_ 0x?_ (jump if flag)
 */
-module cpu(
+module cpu#(
+    parameter MODEL_TYPE = 300
+)(
     // instructions and state clear pins
     input       [23:0] ins, // ins to execute
     input              exi, // execute ins flag
@@ -134,15 +140,17 @@ always @(posedge exi) begin
         case (igr)
             // Aritmethic
             4'b0010: begin
-                case ({grfn, lowm})
+                tmp = lowm ? {24'h0, i8} : peek(rb);
+
+                case (grfn)
                     // Addition
-                    4'b000: poke(rd, peek(ra) + peek(rb));
-                    // Add with imm
-                    4'b001: poke(rd, peek(ra) + {24'h0, i8});
+                    3'b000: poke(rd, peek(ra) + tmp);
                     // Substraction
-                    4'b010: poke(rd, peek(ra) - peek(rb));
-                    // Substraction with imm
-                    4'b011: poke(rd, peek(ra) - {24'h0, i8});
+                    3'b001: poke(rd, peek(ra) - tmp);
+                    // Multiply
+                    3'b010: if (MODEL_TYPE >= 350) poke(rd, peek(ra) * tmp);
+                    // Divition
+                    3'b011: if (MODEL_TYPE >= 350) poke(rd, peek(ra) / tmp);
                     default: ;
                 endcase
             end

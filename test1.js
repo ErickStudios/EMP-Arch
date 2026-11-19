@@ -5,13 +5,8 @@ let cpu = new cpuEmus.cpuGen3();
 let rom = g3asm.parseAsm(`
     local 0xf0000
 reset:
-    li %a $0xABCDEF
-    lh %x %a+%z
-    mxl %x $0x134
-    sw %x %a+%z
-.sa:
-    li %l $.sa
-    jf %l %z $0 # always equ
+    mxl %a $10
+    
 tax:
     rsv (0xfff0-$)
     li %l $reset

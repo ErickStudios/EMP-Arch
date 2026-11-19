@@ -187,7 +187,7 @@ export function LineAsm(line, context) {
                 {type: 'const', value: 0, bits: (24-17)}
             ],
             ADDI: [
-                {type: 'const', value: 0b00100000, bits: 8},
+                {type: 'const', value: 0b00100001, bits: 8},
                 {type: 'reg', bits: 3},
                 {type: 'reg', bits: 3},
                 {type: 'const', value: 0, bits: 2},
@@ -201,7 +201,35 @@ export function LineAsm(line, context) {
                 {type: 'const', value: 0, bits: (24-17)}
             ],
             SUBI: [
-                {type: 'const', value: 0b00100010, bits: 8},
+                {type: 'const', value: 0b00100011, bits: 8},
+                {type: 'reg', bits: 3},
+                {type: 'reg', bits: 3},
+                {type: 'const', value: 0, bits: 2},
+                {type: 'imm', bits: 8}
+            ],
+            MUL: [
+                {type: 'const', value: 0b00100100, bits: 8},
+                {type: 'reg', bits: 3},
+                {type: 'reg', bits: 3},
+                {type: 'reg', bits: 3},
+                {type: 'const', value: 0, bits: (24-17)}
+            ],
+            MULI: [
+                {type: 'const', value: 0b00100101, bits: 8},
+                {type: 'reg', bits: 3},
+                {type: 'reg', bits: 3},
+                {type: 'const', value: 0, bits: 2},
+                {type: 'imm', bits: 8}
+            ],
+            DIV: [
+                {type: 'const', value: 0b00100110, bits: 8},
+                {type: 'reg', bits: 3},
+                {type: 'reg', bits: 3},
+                {type: 'reg', bits: 3},
+                {type: 'const', value: 0, bits: (24-17)}
+            ],
+            DIVI: [
+                {type: 'const', value: 0b00100111, bits: 8},
                 {type: 'reg', bits: 3},
                 {type: 'reg', bits: 3},
                 {type: 'const', value: 0, bits: 2},
@@ -267,7 +295,7 @@ export function LineAsm(line, context) {
         let used = 0;
 
         function write(value, bits) {
-            value = BigInt(value);
+            value = BigInt(value ?? 0);
             bits = Number(bits);
 
             if (bits < 0 || bits > 32) {
@@ -597,6 +625,10 @@ export function LineDisasm(bytes, context=null) {
             addi %rd %ra $i # 0b0010:0b0001 0bRD:0bRA 0x?? (add imm)
             sub %rd %ra %rb # 0b0010:0b0010 0bRD:0bRA:0bRB (sub)
             subi %rd %ra $i # 0b0010:0b0011 0bRD:0bRA 0x?? (sub imm)
+            mul %rd %ra %rb # 0b0010:0b0100 0bRD:0bRA:0bRB (mul 350+)
+            muli %rd %ra $i # 0b0010:0b0101 0bRD:0bRA 0x?? (mul imm 350+)
+            div %rd %ra %rb # 0b0010:0b0110 0bRD:0bRA:0bRB (div 350+)
+            divi %rd %ra $i # 0b0010:0b0111 0bRD:0bRA 0x?? (div imm 350+)
             mv %rd %rs      # 0b0001:0b0010 0bRD:0bRS :: %rd = %rs
             mh %r $i        # 0b0001:0bRRR0 0x???? (load high) :: %r = %r | (i << 16)
             ml %r $l        # 0b0001:0bRRR1 0x???? (load low) :: %r = %r | i
@@ -613,7 +645,7 @@ export function LineDisasm(bytes, context=null) {
         switch (info.igr) {
             // Aritmethic
             case 0b0010:
-                let oprs = ['add', 'sub'];
+                let oprs = ['add', 'sub', 'mul', 'div'];
                 let i_ind = info.lowm ? ['i', asm_info.i8] : ['', asm_info.rb];
                 if (info.grfn < oprs.length) {
                     return `${oprs[info.grfn]}${i_ind[0]} ${asm_info.rd} ${asm_info.ra} ${i_ind[1]}`;

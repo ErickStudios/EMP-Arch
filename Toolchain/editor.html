@@ -35,15 +35,18 @@
                 tokenizer: {
                     root: [
                         // Primero los números/direcciones con sufijo o prefijo de símbolo para que no los tome como texto
-                        [/\$[a-zA-Z0-9_.]+h?/i, 'number'],
-                        [/\b\d+h?\b/i, 'number'],
-                        [/\b\w+\b\:/i, 'variable'],
-                        [/\%\w+h?/i, 'variable'],
+                        [/[a-fA-F0-9_.]+h/i, 'number'],
+                        [/0x[a-fA-F0-9.]+/, 'number'],
 
-                        [/\b(tsa|mva|cpa|cpb|cpc|cpx|cpy|cpz|zrc|stc|adc|sbb|pag|sta|lda|mdc|cha|ldc|brc|chb|cta|bcc|cda|chc)\b/i, 'keyword'],
+                        [/\b\w+\b\:/i, 'variable'],
+                        [/\b(\$|#|\%)\b/, 'types'],
+
+                        [/\b(rsv|local|reserve|li)\b/i, 'keyword.flow'],
+                        [/\b(add|addi|sub|subi|lw|sw|lh|sh|lb|sb|ml|mh|mxl|jf)\b/i, 'keyword'],
+                        [/\w+h?/i, 'variable'],
 
                         // Comentarios
-                        [/;[^\n]*$/, 'comment'],
+                        [/#[^\n]*$/, 'comment'],
 
                         // Cadenas de texto
                         [/"([^"\\]|\\.)*$/, 'string.invalid'],
@@ -66,6 +69,8 @@
                 language: 'mi-lenguaje',
                 theme: 'vs-dark'
             });
+
+            window.edit0 = editor
         });
     </script>
 </body>

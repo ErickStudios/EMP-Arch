@@ -478,7 +478,8 @@ export class cpuGen2 {
 }
 
 export class cpuGen3 {
-    constructor() {
+    constructor(model_type=300) {
+        this.model = model_type;
         this.clr();
     }
     rex(adr, mft) {
@@ -555,7 +556,17 @@ export class cpuGen3 {
                     // Substraction
                     case 0b001:
                         v = o1 - o2;   
-                        break;    
+                        break;
+                    // Mul
+                    case 0b010:
+                        if (this.model >= 350)
+                            v = o1 * o2;
+                        break;
+                    // Div
+                    case 0b011:
+                        if (this.model >= 350)
+                            v = Math.floor(o1 / o2);
+                        break;
                     default:
                         break;
                 }; this.poke(this.rd, v);
