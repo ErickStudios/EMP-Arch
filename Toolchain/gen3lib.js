@@ -295,7 +295,7 @@ export function LineAsm(line, context) {
         let used = 0;
 
         function write(value, bits) {
-            value = BigInt(value ?? 0);
+            value = BigInt(Number.isNaN(value) ? 0 : value);
             bits = Number(bits);
 
             if (bits < 0 || bits > 32) {

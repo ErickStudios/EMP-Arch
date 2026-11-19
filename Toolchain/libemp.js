@@ -1886,7 +1886,7 @@ function LineAsm3(line, context) {
     let buffer = 0;
     let used = 0;
     function write(value, bits) {
-      value = BigInt(value ?? 0);
+      value = BigInt(Number.isNaN(value) ? 0 : value);
       bits = Number(bits);
       if (bits < 0 || bits > 32) {
         throw new Error(`Invalid field width: ${bits}`);
