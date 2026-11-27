@@ -37,12 +37,13 @@
                         // Primero los números/direcciones con sufijo o prefijo de símbolo para que no los tome como texto
                         [/[a-fA-F0-9_.]+h/i, 'number'],
                         [/0x[a-fA-F0-9.]+/, 'number'],
+                        [/\d+/, 'number'],
 
                         [/\b\w+\b\:/i, 'variable'],
                         [/\b(\$|#|\%)\b/, 'types'],
 
-                        [/\b(rsv|local|reserve|li)\b/i, 'keyword.flow'],
-                        [/\b(add|addi|sub|subi|lw|sw|lh|sh|lb|sb|ml|mh|mxl|jf)\b/i, 'keyword'],
+                        [/\b(rsv|local|reserve|li|dw|dq|dd|db|byte|word|half)\b/i, 'keyword.flow'],
+                        [/\b(add|addi|sub|subi|mul|muli|div|divi|and|andi|orb|orbi|xor|xori|lw|sw|lh|sh|lb|sb|ml|mh|mxl|jf)\b/i, 'keyword'],
                         [/\w+h?/i, 'variable'],
 
                         // Comentarios

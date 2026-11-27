@@ -147,6 +147,23 @@ export function LineAsm(line, context) {
     function getOpcodeOf(name) {
         let nam = name.toUpperCase();
     
+        function FastOperationsCreator(Name, Opcode) {
+            return { [Name]: [
+                {type: 'const', value: 0b00100000 | (Opcode << 1), bits: 8},
+                {type: 'reg', bits: 3},
+                {type: 'reg', bits: 3},
+                {type: 'reg', bits: 3},
+                {type: 'const', value: 0, bits: (24-17)}
+            ],
+            [Name + 'I']: [
+                {type: 'const', value: 0b00100001 | (Opcode << 1), bits: 8},
+                {type: 'reg', bits: 3},
+                {type: 'reg', bits: 3},
+                {type: 'const', value: 0, bits: 2},
+                {type: 'imm', bits: 8}
+            ], }
+        }
+
         const instrs = {
             JF: [
                 {type: 'const', value: 0b01000000, bits: 8},
@@ -235,6 +252,9 @@ export function LineAsm(line, context) {
                 {type: 'const', value: 0, bits: 2},
                 {type: 'imm', bits: 8}
             ],
+            ...FastOperationsCreator('AND', 0b100),
+            ...FastOperationsCreator('ORB', 0b101),
+            ...FastOperationsCreator('XOR', 0b110),
             LW: [
                 {type: 'const', value: 0b00001100, bits: 8},
                 {type: 'reg', bits: 3},
@@ -405,7 +425,8 @@ export function LineAsm(line, context) {
         case 'dd': return 4;
         case 'dq': return 8;
         case 'byte': return 1;
-        case 'word': return 2;
+        case 'half': return 2;
+        case 'word': return 4;
         }
     }
     function parseSyntx(info={}) {

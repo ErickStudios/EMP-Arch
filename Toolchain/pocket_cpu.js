@@ -559,13 +559,23 @@ export class cpuGen3 {
                         break;
                     // Mul
                     case 0b010:
-                        if (this.model >= 350)
-                            v = o1 * o2;
+                        if (this.model >= 350) v = o1 * o2;
                         break;
                     // Div
                     case 0b011:
-                        if (this.model >= 350)
-                            v = Math.floor(o1 / o2);
+                        if (this.model >= 350) v = Math.floor(o1 / o2);
+                        break;
+                    // And
+                    case 0b100:
+                        if (this.model >= 370) v = o1 & o2;
+                        break;
+                    // Or
+                    case 0b101:
+                        if (this.model >= 370) v = o1 | o2;
+                        break;
+                    // Xor
+                    case 0b110:
+                        if (this.model >= 370) v = o1 ^ o2;
                         break;
                     default:
                         break;

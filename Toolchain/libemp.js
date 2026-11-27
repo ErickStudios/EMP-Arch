@@ -534,13 +534,23 @@ var cpuGen3 = class {
             break;
           // Mul
           case 2:
-            if (this.model >= 350)
-              v = o1 * o2;
+            if (this.model >= 350) v = o1 * o2;
             break;
           // Div
           case 3:
-            if (this.model >= 350)
-              v = Math.floor(o1 / o2);
+            if (this.model >= 350) v = Math.floor(o1 / o2);
+            break;
+          // And
+          case 4:
+            if (this.model >= 370) v = o1 & o2;
+            break;
+          // Or
+          case 5:
+            if (this.model >= 370) v = o1 | o2;
+            break;
+          // Xor
+          case 6:
+            if (this.model >= 370) v = o1 ^ o2;
             break;
           default:
             break;
@@ -1741,6 +1751,24 @@ function LineAsm3(line, context) {
   }
   function getOpcodeOf(name) {
     let nam = name.toUpperCase();
+    function FastOperationsCreator(Name, Opcode) {
+      return {
+        [Name]: [
+          { type: "const", value: 32 | Opcode << 1, bits: 8 },
+          { type: "reg", bits: 3 },
+          { type: "reg", bits: 3 },
+          { type: "reg", bits: 3 },
+          { type: "const", value: 0, bits: 24 - 17 }
+        ],
+        [Name + "I"]: [
+          { type: "const", value: 33 | Opcode << 1, bits: 8 },
+          { type: "reg", bits: 3 },
+          { type: "reg", bits: 3 },
+          { type: "const", value: 0, bits: 2 },
+          { type: "imm", bits: 8 }
+        ]
+      };
+    }
     const instrs = {
       JF: [
         { type: "const", value: 64, bits: 8 },
@@ -1829,6 +1857,9 @@ function LineAsm3(line, context) {
         { type: "const", value: 0, bits: 2 },
         { type: "imm", bits: 8 }
       ],
+      ...FastOperationsCreator("AND", 4),
+      ...FastOperationsCreator("ORB", 5),
+      ...FastOperationsCreator("XOR", 6),
       LW: [
         { type: "const", value: 12, bits: 8 },
         { type: "reg", bits: 3 },
@@ -1978,8 +2009,10 @@ function LineAsm3(line, context) {
         return 8;
       case "byte":
         return 1;
-      case "word":
+      case "half":
         return 2;
+      case "word":
+        return 4;
     }
   }
   function parseSyntx(info = {}) {

@@ -14,6 +14,12 @@
     muli %rd %ra $i # 0b0010:0b0101 0bRD:0bRA 0x?? (mul imm 350+)
     div %rd %ra %rb # 0b0010:0b0110 0bRD:0bRA:0bRB (div 350+)
     divi %rd %ra $i # 0b0010:0b0111 0bRD:0bRA 0x?? (div imm 350+)
+    and %rd %ra %rb # 0b0010:0b1000 0bRD:0bRA:0bRB (and 370+)
+    andi %rd %ra $i # 0b0010:0b1001 0bRD:0bRA 0x?? (and imm 370+)
+    orb %rd %ra %rb # 0b0010:0b1010 0bRD:0bRA:0bRB (or 370+)
+    orbi %rd %ra $i # 0b0010:0b1011 0bRD:0bRA 0x?? (or imm 370+)
+    xor %rd %ra %rb # 0b0010:0b1100 0bRD:0bRA:0bRB (xor 370+)
+    xori %rd %ra $i # 0b0010:0b1101 0bRD:0bRA 0x?? (xor imm 370+)
     mv %rd %rs      # 0b0001:0b0010 0bRD:0bRS :: %rd = %rs
     mh %r $i        # 0b0001:0bRRR0 0x???? (load high) :: %r = %r | (i << 16)
     ml %r $l        # 0b0001:0bRRR1 0x???? (load low) :: %r = %r | i
@@ -151,6 +157,12 @@ always @(posedge exi) begin
                     3'b010: if (MODEL_TYPE >= 350) poke(rd, peek(ra) * tmp);
                     // Divition
                     3'b011: if (MODEL_TYPE >= 350) poke(rd, peek(ra) / tmp);
+                    // And
+                    3'b100: if (MODEL_TYPE >= 370) poke(rd, peek(ra) & tmp);
+                    // Or
+                    3'b101: if (MODEL_TYPE >= 370) poke(rd, peek(ra) | tmp);
+                    // Xor
+                    3'b110: if (MODEL_TYPE >= 370) poke(rd, peek(ra) ^ tmp);
                     default: ;
                 endcase
             end
